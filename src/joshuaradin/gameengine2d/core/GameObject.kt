@@ -1,25 +1,63 @@
 package joshuaradin.gameengine2d.core
 
+import joshuaradin.gameengine2d.core.scene.Scene
+import joshuaradin.gameengine2d.core.scene.SceneManager
 import joshuaradin.gameengine2d.standard.component.Transform
+import joshuaradin.gameengine2d.standard.type.Vector2
+import java.io.Serializable
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSuperclassOf
+import kotlin.reflect.full.memberProperties
 
 
-class GameObject(var parent: GameObject?, children: List<GameObject>) {
-
-
+class GameObject(private var scene: Scene, private var _parent: GameObject?, children: List<GameObject>, name: String = scene.createQualifiedName<GameObject>()) : Serializable {
+    var name = scene.createQualifiedName(name)
+    val parent: GameObject?
+        get() = _parent
 
     companion object {
         fun createEmpty(parent: GameObject?) : GameObject {
-            return GameObject(parent, istOf())
+
+            val name: String = if(parent == null) "Base" else "Empty"
+
+            return if (parent != null) {
+                val initialScene = parent.scene
+                GameObject(initialScene, parent, listOf(), name)
+            } else GameObject(SceneManager.activeScene!!, parent, listOf(), name)
+        }
+
+        fun instantiate(other: GameObject) : GameObject {
+            val created: GameObject = createEmpty(other.parent)
+            created.name = other.name + " copy"
+            for (component in other.components) {
+                val createdComponent = created.addComponent(component::class)
+                if(createdComponent != null) component.applyTo(createdComponent)
+            }
+
+            return created
+        }
+
+        inline fun <reified T : Component> T.applyTo(other: Component) : Component? {
+            val t: T? = other as? T
+            return null ?: this.applyTo(T::class, t!!)
+        }
+
+
+        fun <T : Component> T.applyTo(type: KClass<T>, other: T) : Component {
+            for (memberProperty in type.memberProperties) {
+
+                if(memberProperty is KMutableProperty<*>) {
+                    val thisVal = memberProperty.getter.call(this)
+                    memberProperty.setter.call(other, thisVal)
+                }
+            }
+
+            return other
         }
     }
 
-
-    constructor(parent: GameObject, components: List<Component>, children: MutableList<GameObject>) : this(parent, children){
-        this.components.addAll(components)
-    }
 
 
 
@@ -27,18 +65,25 @@ class GameObject(var parent: GameObject?, children: List<GameObject>) {
     var deactivateOnSceneChange: Boolean = true
     private val components: MutableList<Component> = mutableListOf()
 
+
+
     init {
+        GameObjectTracker.instance?.add(this, scene)
+        parent?.children?.add(this)
         for (child in children) {
-            child.parent = this
+            child.setParent(this)
         }
         addComponent<Transform>()
     }
+
+    val transform = getComponent<Transform>()!!
 
 
     fun addChild(o: GameObject) : Boolean {
         if(o in children) return false
         children.add(o)
-        o.parent = this
+        o._parent?.children?.remove(o)
+        o._parent = this
         return true
     }
 
@@ -49,7 +94,7 @@ class GameObject(var parent: GameObject?, children: List<GameObject>) {
     fun removeChild(o: GameObject) : GameObject? {
         if(o !in children) return null
         children.remove(o)
-        o.parent = null
+        o._parent = null
         return o
     }
 
@@ -57,9 +102,11 @@ class GameObject(var parent: GameObject?, children: List<GameObject>) {
         os.filter { it in children }.forEach { removeChild(it)}
     }
 
-    fun changeParent(p: GameObject) {
+    fun setParent(p: GameObject) {
+        this.transform.position = getGlobalPosition()
         parent?.removeChild(this)
-        p.addChild(p)
+        p.addChild(this)
+        this.transform.applyGlobalToLocal(p.getGlobalPosition())
     }
 
     /**
@@ -78,6 +125,10 @@ class GameObject(var parent: GameObject?, children: List<GameObject>) {
         return output
     }
 
+    fun getAllChildren() : List<GameObject> {
+        return getChildren(Int.MAX_VALUE)
+    }
+
 
 
 
@@ -89,8 +140,8 @@ class GameObject(var parent: GameObject?, children: List<GameObject>) {
         return addComponent { type.createInstance() }
     }
 
-    fun <T : Component> addComponent(factory: (GameObject) -> T?) : T? {
-        val createdComponent: T? = factory(this)
+    fun <T : Component> addComponent(factory: () -> T?) : T? {
+        val createdComponent: T? = factory()
         createdComponent?: return null
         addComponent(createdComponent)
         return createdComponent
@@ -137,6 +188,16 @@ class GameObject(var parent: GameObject?, children: List<GameObject>) {
 
     inline fun <reified T : Component> hasComponent() : Boolean {
         return hasComponent(T::class)
+    }
+
+    override fun toString(): String {
+        return name
+    }
+
+    fun getGlobalPosition() : Vector2 {
+        var output: Vector2 = transform.position
+        if(parent != null) output += parent!!.getGlobalPosition()
+        return output
     }
 
 

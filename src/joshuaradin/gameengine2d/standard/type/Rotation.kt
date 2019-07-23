@@ -47,4 +47,14 @@ class Rotation(radians: Double = 0.0) {
     fun Double.toDegrees() : Double{
         return (this / PI) * 180
     }
+
+    fun round() : Rotation {
+        val output = Rotation(this)
+        output.radians = radians % .000001
+        return output
+    }
+
+    override fun toString(): String {
+        return "$degrees*"
+    }
 }

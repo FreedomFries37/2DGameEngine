@@ -1,11 +1,15 @@
 package joshuaradin.gameengine2d.core
 
 import joshuaradin.gameengine2d.standard.component.Transform
+import java.io.Serializable
 import kotlin.reflect.KClass
 
 class GameObjectSetException : Exception("Can't reassign game object")
 
-abstract class Component {
+
+abstract class Component{
+
+
 
     private var gameObjectSet = false
     private var _gameObject: GameObject? = null

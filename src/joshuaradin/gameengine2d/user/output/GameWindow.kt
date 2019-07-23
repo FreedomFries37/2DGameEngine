@@ -6,19 +6,19 @@ import joshuaradin.gameengine2d.standard.component.Transform
 import joshuaradin.gameengine2d.user.input.Input
 import java.awt.*
 import javax.swing.JFrame
-import javax.swing.JLabel
 
-class GameWindow(name: String, val gameObjectTracker: GameObjectTracker = GameObjectTracker()) : JFrame(name) {
+class GameWindow(name: String, val gameObjectTracker: GameObjectTracker = GameObjectTracker.initialize()) : JFrame(name) {
 
     init {
         Input.attachTo(this)
         preferredSize = Dimension(600, 400)
         defaultCloseOperation = EXIT_ON_CLOSE
         contentPane.layout = BorderLayout()
-        val jLabel = JLabel("Hello World")
+        /*val jLabel = JLabel("Hello World")
         jLabel.horizontalTextPosition = JLabel.CENTER
         jLabel.foreground = Color.RED
-        contentPane.add(jLabel, BorderLayout.NORTH)
+        contentPane.add(jLabel, BorderLayout.NORTH)*/
+        contentPane.add(GamePanel().mainPanel)
         isResizable = false
         pack()
         isVisible = true

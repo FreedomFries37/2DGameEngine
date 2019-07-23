@@ -5,13 +5,35 @@ import joshuaradin.gameengine2d.core.scene.Scene
 
 class TrackerMissingException : Exception("Game Object Tracker Missing")
 
-class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
+class GameObjectTracker private constructor (collection: Collection<Pair<Scene, GameObject>>){
 
-    constructor(vararg objects: Pair<Scene, GameObject>) : this(objects.toList())
 
+    private constructor(objects: Array<Pair<Scene, GameObject>>) : this(objects.toList())
+
+    companion object{
+        private var _instance: GameObjectTracker? = null
+        val instance: GameObjectTracker
+            get(){
+                if (_instance == null) _instance = initialize()
+                return _instance!!
+            }
+
+
+        fun initialize(vararg objects: Pair<Scene, GameObject>) : GameObjectTracker{
+
+            if(_instance == null) _instance = GameObjectTracker(objects.toList())
+            return instance
+        }
+
+        fun initialize(collection: Collection<Pair<Scene, GameObject>>) : GameObjectTracker {
+            if(_instance == null) _instance = GameObjectTracker(collection)
+            return instance
+        }
+    }
 
     private val objectSet: MutableSet<GameObject> = mutableSetOf()
     private val activeSceneToGameObjects = mutableMapOf<Scene, MutableSet<GameObject>>()
+    private val gameObjectToInitalScene = mutableMapOf<GameObject, Scene>()
     private val _activeObjects: MutableSet<GameObject> = mutableSetOf()
     val activeObjects: Set<GameObject>
         get() {return _activeObjects; }
@@ -20,6 +42,7 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
     init {
         for (pair in collection) {
             add(pair.second, pair.first)
+            gameObjectToInitalScene[pair.second] = pair.first
         }
 
         for (gameObject in objectSet) {
@@ -32,22 +55,28 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
 
         activeSceneToGameObjects[activeScene]?.add(gameObject)
         objectSet.add(gameObject)
+        gameObjectToInitalScene[gameObject] = activeScene
         gameObject.init()
     }
 
-    private fun addScene(scene: Scene) {
+    fun addScene(scene: Scene) {
         val set = mutableSetOf<GameObject>()
         activeSceneToGameObjects.put(scene, set)
     }
 
-    private fun awareOfScene(scene: Scene) : Boolean {
+    fun awareOfScene(scene: Scene) : Boolean {
         return activeSceneToGameObjects.containsKey(scene)
+    }
+
+    fun getInitialScene(o: GameObject?) : Scene?{
+        return gameObjectToInitalScene[o]
     }
 
     fun sceneChange(scene: Scene){
         _activeObjects.removeIf {it.deactivateOnSceneChange}
         if(!awareOfScene(scene)) return
         _activeObjects.addAll(activeSceneToGameObjects[scene]!!.toList())
+        start()
     }
 
     fun start() {
@@ -71,5 +100,13 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
         }
     }
 
+    fun printAllObjectSceneAndPosition() {
+        for (scene in activeSceneToGameObjects.keys) {
+            println("#${scene.name}")
+            for (gameObject in activeSceneToGameObjects[scene]!!) {
+                println("\t${gameObject.name} - " + gameObject.transform.position + " @ ${gameObject.transform.rotation} [global: ${gameObject.getGlobalPosition()}]")
+            }
+        }
+    }
 
 }

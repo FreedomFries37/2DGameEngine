@@ -16,4 +16,8 @@ class Point(var x: Double, var y: Double) {
     fun distance(other: Point) : Double{
         return ((x - other.x).pow(2) + (y - other.y).pow(2)).pow(0.5)
     }
+
+    fun displacement() = distance(ZERO)
+
+    fun angle(other: Point) = Line(this, other).angle
 }
