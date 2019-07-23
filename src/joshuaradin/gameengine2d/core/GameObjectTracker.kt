@@ -1,6 +1,7 @@
 package joshuaradin.gameengine2d.core
 
 import joshuaradin.gameengine2d.core.listeners.Event
+import joshuaradin.gameengine2d.core.scene.Scene
 
 class TrackerMissingException : Exception("Game Object Tracker Missing")
 
@@ -11,7 +12,9 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
 
     private val objectSet: MutableSet<GameObject> = mutableSetOf()
     private val activeSceneToGameObjects = mutableMapOf<Scene, MutableSet<GameObject>>()
-    private val activeObjects: MutableSet<GameObject> = mutableSetOf()
+    private val _activeObjects: MutableSet<GameObject> = mutableSetOf()
+    val activeObjects: Set<GameObject>
+        get() {return _activeObjects; }
     private val startedObjects: MutableSet<GameObject> = mutableSetOf()
 
     init {
@@ -42,13 +45,13 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
     }
 
     fun sceneChange(scene: Scene){
-        activeObjects.removeIf {it.deactivateOnSceneChange}
+        _activeObjects.removeIf {it.deactivateOnSceneChange}
         if(!awareOfScene(scene)) return
-        activeObjects.addAll(activeSceneToGameObjects[scene]!!.toList())
+        _activeObjects.addAll(activeSceneToGameObjects[scene]!!.toList())
     }
 
     fun start() {
-        for (activeObject in activeObjects) {
+        for (activeObject in _activeObjects) {
             if(activeObject !in startedObjects) {
                 startedObjects.add(activeObject)
                 activeObject.start()
@@ -57,7 +60,7 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
     }
 
     fun update() {
-        for (activeObject in activeObjects) {
+        for (activeObject in _activeObjects) {
             activeObject.update()
         }
     }
@@ -67,5 +70,6 @@ class GameObjectTracker (collection: Collection<Pair<Scene, GameObject>>){
             c.reactToEvent(e)
         }
     }
+
 
 }
