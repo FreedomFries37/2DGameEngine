@@ -2,12 +2,15 @@ package joshuaradin.gameengine2d.core
 
 import joshuaradin.gameengine2d.core.listeners.Event
 import joshuaradin.gameengine2d.core.scene.Scene
+import joshuaradin.gameengine2d.user.output.I2DRenderer
+import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 
 class TrackerMissingException : Exception("Game Object Tracker Missing")
 
 class GameObjectTracker private constructor (collection: Collection<Pair<Scene, GameObject>>){
 
-
+    var currentScene: Scene? = null
+        private set
     private constructor(objects: Array<Pair<Scene, GameObject>>) : this(objects.toList())
 
     companion object{
@@ -22,11 +25,13 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         fun initialize(vararg objects: Pair<Scene, GameObject>) : GameObjectTracker{
 
             if(_instance == null) _instance = GameObjectTracker(objects.toList())
+            else objects.forEach { instance.add(it.second, it.first) }
             return instance
         }
 
         fun initialize(collection: Collection<Pair<Scene, GameObject>>) : GameObjectTracker {
             if(_instance == null) _instance = GameObjectTracker(collection)
+            else collection.forEach { instance.add(it.second, it.first) }
             return instance
         }
     }
@@ -76,6 +81,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         _activeObjects.removeIf {it.deactivateOnSceneChange}
         if(!awareOfScene(scene)) return
         _activeObjects.addAll(activeSceneToGameObjects[scene]!!.toList())
+        currentScene = scene
         start()
     }
 
@@ -92,6 +98,10 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         for (activeObject in _activeObjects) {
             activeObject.update()
         }
+    }
+
+    fun getRenderables() : List<Renderer2DComponent> {
+        return activeObjects.filter { it.hasComponent<Renderer2DComponent>() }.map { it.getComponent<Renderer2DComponent>()!! }
     }
 
     fun GameObject.sendEvent(e: Event){

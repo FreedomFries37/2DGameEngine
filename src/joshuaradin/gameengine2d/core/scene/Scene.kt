@@ -1,6 +1,8 @@
 package joshuaradin.gameengine2d.core.scene
 
+import joshuaradin.gameengine2d.core.Component
 import joshuaradin.gameengine2d.core.GameObject
+import joshuaradin.gameengine2d.standard.component.Camera2D
 import java.io.Serializable
 import kotlin.reflect.KClass
 
@@ -34,6 +36,16 @@ class Scene (val name: String = "scene" + (++numScenes)) : Serializable{
     fun initialize() {
         baseObject = GameObject.createEmpty(null)
         initialized = true
+
+        val camera = createGameObject()
+        camera.name = "Camera"
+        camera.addComponent<Camera2D>()
+    }
+
+    inline fun <reified T : Component> getGameObjectWithComponent() : GameObject? = getGameObjectWithComponent(T::class)
+
+    fun <T : Component> getGameObjectWithComponent(type: KClass<T>) : GameObject? {
+        return objectsInScene().find { it.hasComponent(type) }
     }
 
     inline fun <reified T> createQualifiedName() = createQualifiedName(T::class)

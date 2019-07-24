@@ -27,6 +27,10 @@ data class Vector2 (var x: Double, var y: Double) {
         return Vector2(x * other.x, y * other.y)
     }
 
+    operator fun times(other: Double) : Vector2{
+        return Vector2(x * other, y * other)
+    }
+
     fun toPoint() : Point {
         return Point(x, y)
     }

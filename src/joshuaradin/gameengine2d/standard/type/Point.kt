@@ -2,7 +2,7 @@ package joshuaradin.gameengine2d.standard.type
 
 import kotlin.math.pow
 
-class Point(var x: Double, var y: Double) {
+data class Point(var x: Double, var y: Double) {
     companion object {
         val ZERO = Point(0.0, 0.0)
     }
@@ -20,4 +20,11 @@ class Point(var x: Double, var y: Double) {
     fun displacement() = distance(ZERO)
 
     fun angle(other: Point) = Line(this, other).angle
+
+    operator fun plus(o: Vector2) : Point{
+        val output = copy()
+        output.x += o.x
+        output.y += o.y
+        return output
+    }
 }
