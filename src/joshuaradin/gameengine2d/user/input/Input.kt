@@ -27,8 +27,7 @@ object Input {
         override fun keyPressed(e: KeyEvent?) {
             if(e != null){
                 if(!keysPressed.contains(e.keyCode) ) keysPressed.add(e.keyCode)
-                if(!keysDown.contains(e.keyCode) ) keysDown.add(e.keyCode)
-                if(!keysPressed.contains(e.keyCode) && keysChecked.contains(e.keyCode)) keysChecked.remove(e.keyCode)
+                if(!keysChecked.containsKey(e.keyCode)) keysChecked[e.keyCode] = false
             }
         }
 
@@ -41,32 +40,42 @@ object Input {
         override fun keyReleased(e: KeyEvent?) {
             if(e != null){
                 keysPressed.remove(e.keyCode)
+                keysChecked.remove(e.keyCode)
             }
         }
     }
 
-    //TODO: make getKeyDown() functional
-    private val keysPressed = mutableSetOf<Int>()
-    private val keysDown = mutableSetOf<Int>()
-    private val keysChecked = mutableSetOf<Int>()
 
+    private val keysPressed = mutableSetOf<Int>()
+    private val keysChecked = mutableMapOf<Int, Boolean>()
+
+    /**
+     * returns true while a key is being held
+     */
     fun getKey(keycode: Int) : Boolean{
         return keysPressed.contains(keycode)
     }
 
+    /**
+     * returns true while a key is being held
+     */
     fun getKey(keycode: KeyCode) : Boolean{
         return keysPressed.contains(keycode.code)
     }
 
+    /**
+     * only returns true once for when a key is pressed
+     */
     fun getKeyDown(keycode: Int) : Boolean{
-        val output = keysDown.contains(keycode) && !keysChecked.contains(keycode)
-        if(output){
-            keysDown.remove(keycode)
-            keysChecked.add(keycode)
-        }
+        if(!keysChecked.containsKey(keycode)) return false
+        val output = !keysChecked[keycode]!!
+        keysChecked[keycode] = true
         return output
     }
 
+    /**
+     * only returns true once for when a key is pressed
+     */
     fun getKeyDown(keycode: KeyCode) : Boolean{
         return getKeyDown(keycode.code)
     }
