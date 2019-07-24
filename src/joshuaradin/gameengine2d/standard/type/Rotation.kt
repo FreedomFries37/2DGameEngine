@@ -1,8 +1,9 @@
 package joshuaradin.gameengine2d.standard.type
 
+import java.io.Serializable
 import kotlin.math.PI
 
-class Rotation(radians: Double = 0.0) {
+class Rotation(radians: Double = 0.0) : Serializable{
 
     private var _radians: Double = radians
     var radians: Double

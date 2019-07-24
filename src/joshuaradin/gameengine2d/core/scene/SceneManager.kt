@@ -1,8 +1,8 @@
 package joshuaradin.gameengine2d.core.scene
 
-import joshuaradin.gameengine2d.core.GameObject
-import joshuaradin.gameengine2d.core.GameObjectTracker
+import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.scene.SceneManager.addScene
+import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.type.Rotation
 import joshuaradin.gameengine2d.standard.type.Vector2
 
@@ -14,18 +14,25 @@ object SceneManager {
 
     var activeScene: Scene? = null
         private set
+    val stagingScene : Scene
+
+    init {
+        stagingScene = Scene("&staging")
+        addScene(stagingScene)
+    }
 
 
     fun addScene(name: String? = null) : Scene? {
         val scene = if(name.isNullOrBlank()) Scene() else Scene(name)
-        if(activeScene == null) activeScene = scene
-        scene.initialize()
+
         return addScene(scene)
     }
 
     fun addScene(s: Scene) : Scene? {
         if(_scenes.filter { it.name == s.name }.isNotEmpty()) return null
+        if(activeScene == null) activeScene = s
         _scenes.add(s)
+        s.initialize()
         return s
     }
 

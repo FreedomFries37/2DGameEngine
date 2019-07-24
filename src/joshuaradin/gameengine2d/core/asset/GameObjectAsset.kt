@@ -1,6 +1,6 @@
 package joshuaradin.gameengine2d.core.asset
 
-import joshuaradin.gameengine2d.core.GameObject
+import joshuaradin.gameengine2d.core.basic.GameObject
 import java.io.File
 
 class GameObjectAssetFactory : IAssetFactory<GameObject> {

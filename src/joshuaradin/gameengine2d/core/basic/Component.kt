@@ -1,4 +1,4 @@
-package joshuaradin.gameengine2d.core
+package joshuaradin.gameengine2d.core.basic
 
 import joshuaradin.gameengine2d.standard.component.Transform
 import java.io.Serializable
@@ -7,24 +7,26 @@ import kotlin.reflect.KClass
 class GameObjectSetException : Exception("Can't reassign game object")
 
 
-abstract class Component{
+abstract class Component : Cloneable, Serializable{
 
 
 
-    private var gameObjectSet = false
+
     private var _gameObject: GameObject? = null
 
-    var enabled: Boolean = true
 
     var gameObject: GameObject?
         get() = _gameObject
         set(value) {
             if(gameObjectSet) {
-                throw GameObjectSetException()
+                return
             }
             gameObjectSet = true
             _gameObject = value
         }
+    var enabled: Boolean = true
+    private var gameObjectSet = false
+
 
     val transform: Transform?
         get() {return gameObject?.getComponent()}
@@ -32,8 +34,9 @@ abstract class Component{
     abstract fun init()
     abstract fun start()
     abstract fun update()
-
-
+    abstract fun onBoundaryEnter(other: GameObject)
+    abstract fun onBoundaryStay(other: GameObject)
+    abstract fun onBoundaryExit(other: GameObject)
 
     inline fun <reified T : Component> addComponent() : T? {
         return gameObject?.addComponent()
@@ -49,6 +52,10 @@ abstract class Component{
 
     fun <T : Component> getComponent(type: KClass<T>) : T? {
         return gameObject?.addComponent(type)
+    }
+
+    public override fun clone(): Any {
+        return super.clone()
     }
 
 

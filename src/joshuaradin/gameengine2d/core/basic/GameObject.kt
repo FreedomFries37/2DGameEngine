@@ -1,12 +1,16 @@
-package joshuaradin.gameengine2d.core
+package joshuaradin.gameengine2d.core.basic
 
 import joshuaradin.gameengine2d.core.scene.Scene
 import joshuaradin.gameengine2d.core.scene.SceneManager
+import joshuaradin.gameengine2d.core.service.ComponentCloner
+import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Transform
 import joshuaradin.gameengine2d.standard.type.Vector2
+import java.io.IOException
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.memberProperties
@@ -25,18 +29,26 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
             return if (parent != null) {
                 val initialScene = parent.scene
                 GameObject(initialScene, parent, listOf(), name)
-            } else GameObject(SceneManager.activeScene!!, parent, listOf(), name)
+            } else GameObject(SceneManager.stagingScene, parent, listOf(), name)
         }
 
         fun instantiate(other: GameObject) : GameObject {
-            val created: GameObject = createEmpty(other.parent)
+            val created: GameObject =
+                createEmpty(other.parent)
             created.name = other.name + " copy"
             for (component in other.components) {
-                val createdComponent = created.addComponent(component::class)
-                if(createdComponent != null) component.applyTo(createdComponent)
+                val deepClone = ComponentCloner().deepClone(component)
+                if(deepClone == null) throw IOException()
+                created.addComponent(deepClone)
+                println(deepClone)
             }
 
             return created
+        }
+
+        private inline fun <reified T : Component> loopInternal(created: GameObject, component: T) {
+            val createdComponent = created.addComponent(component::class)
+            if (createdComponent != null) component.applyTo(createdComponent)
         }
 
         inline fun <reified T : Component> T.applyTo(other: Component) : Component? {
@@ -46,7 +58,7 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
 
 
         fun <T : Component> T.applyTo(type: KClass<T>, other: T) : Component {
-            for (memberProperty in type.memberProperties) {
+            for (memberProperty in type.memberProperties.filter { it.visibility == KVisibility.PUBLIC }) {
 
                 if(memberProperty is KMutableProperty<*>) {
                     val thisVal = memberProperty.getter.call(this)
@@ -129,7 +141,22 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
         return getChildren(Int.MAX_VALUE)
     }
 
+    fun createEmpty(parent: GameObject? = this) : GameObject {
+        return GameObject.createEmpty(parent)
+    }
 
+    fun instantiate(other: GameObject, parent: GameObject = this) : GameObject {
+        val created: GameObject = createEmpty(parent)
+        created.name = other.name + " copy"
+        for (component in other.components) {
+            val deepClone = ComponentCloner().deepClone(component)
+            if(deepClone == null) throw IOException()
+            created.addComponent(deepClone)
+            println(deepClone)
+        }
+        GameObjectTracker.instance.printAllObjectSceneAndPosition()
+        return created
+    }
 
 
     inline fun <reified T : Component> addComponent() : T?{
@@ -200,6 +227,14 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
         return output
     }
 
+    fun getDistanceTo(other: GameObject) : Vector2 {
+        return getGlobalPosition() - other.getGlobalPosition()
+    }
+
+    fun getDistanceTo(other: Transform) : Vector2 {
+        return getDistanceTo(other.gameObject!!)
+    }
+
 
 
     fun init(){
@@ -217,6 +252,24 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
     fun update() {
         for (component in components.filter { it.enabled }) {
             component.update()
+        }
+    }
+
+    fun onBoundryEnter(other: GameObject){
+        for (component in  components.filter { it.enabled }) {
+            component.onBoundaryEnter(other)
+        }
+    }
+
+    fun onBoundryStay(other: GameObject){
+        for (component in  components.filter { it.enabled }) {
+            component.onBoundaryStay(other)
+        }
+    }
+
+    fun onBoundryExit(other: GameObject){
+        for (component in  components.filter { it.enabled }) {
+            component.onBoundaryExit(other)
         }
     }
 }

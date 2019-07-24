@@ -1,13 +1,9 @@
 package joshuaradin.gameengine2d.user.output
 
-import joshuaradin.gameengine2d.core.GameObjectTracker
 import joshuaradin.gameengine2d.core.ProjectInfo
 import joshuaradin.gameengine2d.core.scene.SceneManager
 import joshuaradin.gameengine2d.standard.component.Camera2D
-import joshuaradin.gameengine2d.standard.component.LineRenderer
-import joshuaradin.gameengine2d.standard.type.Point
-import joshuaradin.gameengine2d.standard.type.Rotation
-import joshuaradin.gameengine2d.standard.type.Vector2
+import joshuaradin.gameengine2d.test.TestScript
 import joshuaradin.gameengine2d.user.connecting.Time
 import kotlin.math.pow
 
@@ -18,9 +14,12 @@ fun main() {
     val gO1 = baseScene.createGameObject()
     val gO2 = baseScene.createGameObject()
 
+    /*
     gO2.setParent(gO1)
     gO2.transform.position += Vector2(10.0, 0.0)
     gO2.transform.rotation = Rotation.createDeg(45.0)
+
+
 
     gO1.transform.rotation += Rotation.createDeg(-90.0)
     GameObjectTracker.instance.printAllObjectSceneAndPosition()
@@ -30,10 +29,11 @@ fun main() {
 
     gO1.transform.rotation += Rotation.createDeg(45.0)
     GameObjectTracker.instance.printAllObjectSceneAndPosition()
+    */
 
-    val lineRenderer = gO1.addComponent<LineRenderer>()
-    lineRenderer?.line?.u = Point(100, 100)
-    lineRenderer?.line?.v = Point(200, 200)
+
+    gO1.addComponent<TestScript>()
+
 
     info.scenes.add(baseScene)
 
@@ -66,7 +66,7 @@ object Run {
             Time.deltaTime = d
 
             val fps = 1.0 / d
-            println("fps = %.1f (%.5f spf)".format(fps, d))
+
 
             if(goTracker.currentScene != startScene) {
                 runningWindow?.currentCamera = goTracker.currentScene?.getGameObjectWithComponent<Camera2D>()?.getComponent()

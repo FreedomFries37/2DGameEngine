@@ -1,6 +1,6 @@
 package joshuaradin.gameengine2d.user.output
 
-import joshuaradin.gameengine2d.core.GameObjectTracker
+import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Camera2D
 import joshuaradin.gameengine2d.standard.component.Transform
 import java.awt.Graphics
@@ -22,7 +22,7 @@ class RenderPanel : JPanel(){
         if(gameObjectTracker == null) return
 
         for (activeObject in gameObjectTracker!!.getRenderables()) {
-            val renderer: I2DRenderer = activeObject.getComponent<Renderer2DComponent>() as I2DRenderer
+            val renderer: I2DRenderer = activeObject
             val transform = activeObject.getComponent<Transform>()
             if(transform != null && currentCamera != null)
                 renderer.render(g2D, transform, currentCamera!!, this)

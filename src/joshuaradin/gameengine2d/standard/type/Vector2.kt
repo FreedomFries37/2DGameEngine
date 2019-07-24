@@ -1,11 +1,27 @@
 package joshuaradin.gameengine2d.standard.type
 
-import kotlin.math.nextDown
+import java.io.Serializable
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
 
-data class Vector2 (var x: Double, var y: Double) {
 
+data class Vector2 (var x: Double, var y: Double) : Serializable{
+
+    companion object {
+
+        fun distanceWithRot(dist: Double, r: Rotation) : Vector2 =
+            distanceWithRot(dist, r.radians)
+
+        fun distanceWithRot(dist: Double, rot: Double) : Vector2 {
+            return Vector2(dist*cos(rot), dist*sin(rot))
+        }
+    }
 
     constructor(other: Vector2) : this(other.x, other.y)
+    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
+
+
 
     operator fun plus(other: Vector2) : Vector2{
         return Vector2(x + other.x, y + other.y)
@@ -60,6 +76,10 @@ data class Vector2 (var x: Double, var y: Double) {
 
     override fun toString(): String {
         return "(x=$x, y=$y)"
+    }
+
+    fun displacement() : Double {
+        return (x.pow(2) + y.pow(2)).pow(0.5)
     }
 
 

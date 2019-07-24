@@ -1,4 +1,4 @@
-package joshuaradin.gameengine2d.core
+package joshuaradin.gameengine2d.core.basic
 
 import joshuaradin.gameengine2d.core.listeners.*
 
@@ -38,6 +38,18 @@ abstract class ObjectBehavior : Component(), IMouseListener {
     }
 
     override fun update() {
+
+    }
+
+    override fun onBoundaryEnter(other: GameObject){
+
+    }
+
+    override fun onBoundaryExit(other: GameObject){
+
+    }
+
+    override fun onBoundaryStay(other: GameObject) {
 
     }
 }

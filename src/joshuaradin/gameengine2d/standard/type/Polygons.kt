@@ -3,10 +3,26 @@ package joshuaradin.gameengine2d.standard.type
 import kotlin.math.*
 
 class Triangle(p1: Point, p2: Point, p3: Point) : Shape(p1, p2 , p3)
-class Quadrilateral(p1: Point, p2: Point, p3: Point, p4: Point) : Shape(p1, p2, p3, p4)
+open class Quadrilateral(p1: Point, p2: Point, p3: Point, p4: Point) : Shape(p1, p2, p3, p4) {
+    internal constructor(other: Shape) : this(other.points[0], other.points[1], other.points[2], other.points[3])
+}
+open class Parallelogram(center: Point, tops: Double, sides: Double, acuteAngle: Rotation) : Quadrilateral(createParallelogram(center, tops, sides, acuteAngle))
+open class Rectangle(center: Point, tops: Double, sides: Double) : Parallelogram(center, tops, sides, Rotation.createDeg(90.0))
+class Square(center: Point, size: Double = 1.0) : Rectangle(center, size, size)
 
+private fun createParallelogram(center: Point, tops: Double, sides: Double, acuteAngle: Rotation) : Shape {
+    val p1 = center.copy(y =  sides*sin(acuteAngle.radians))
+    val p2 = p1.copy(x = p1.x + tops)
+    val nextY = p2.y + sides*sin(-acuteAngle.radians)
+    val nextX = p2.x + sides*cos(-acuteAngle.radians)
+    val p3 = Point(nextX, nextY)
+    val p4 = p3.copy(x = p3.x - tops)
 
-
+    val recentered = Point.recenter(p1, p2, p3, p4)
+    var output: Shape = Quadrilateral(recentered[0], recentered[1], recentered[2], recentered[3])
+    output = output.recenter(Point.ZERO.asVector2())
+    return output
+}
 
 class Circle internal constructor(points: List<Point>) : Shape(points) {
     constructor(center: Point, radius: Double, accuracy: Double = defaultCircleAccuracy) : this(createPointSet(center, radius, accuracy))
@@ -41,8 +57,6 @@ fun getAccuracy(significantDigits: Int) : Double{
 
     } while (!nFirstDigitsSame(significantDigits, actual, createdArea))
 
-    var upperBound = numPoints
-    var lowerBound = numPoints/2
 
 
     return getAccuracy(numPoints, 1.0)

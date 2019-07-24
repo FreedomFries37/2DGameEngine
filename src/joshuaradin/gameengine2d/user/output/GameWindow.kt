@@ -1,15 +1,14 @@
 package joshuaradin.gameengine2d.user.output
 
-import joshuaradin.gameengine2d.core.GameObjectTracker
+import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Camera2D
-import joshuaradin.gameengine2d.standard.component.Transform
 import joshuaradin.gameengine2d.user.connecting.Screen
 import joshuaradin.gameengine2d.user.input.Input
-import java.awt.*
-import javax.swing.JComponent
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JLayeredPane
-import javax.swing.JPanel
 
 class GameWindow(name: String, dimension: Dimension, gameObjectTracker: GameObjectTracker = GameObjectTracker.initialize()) : JFrame(name) {
 

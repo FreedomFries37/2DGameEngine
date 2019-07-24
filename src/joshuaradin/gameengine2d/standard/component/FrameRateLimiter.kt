@@ -1,6 +1,6 @@
 package joshuaradin.gameengine2d.standard.component
 
-import joshuaradin.gameengine2d.core.ObjectBehavior
+import joshuaradin.gameengine2d.core.basic.ObjectBehavior
 
 class FrameRateLimiter : ObjectBehavior() {
 

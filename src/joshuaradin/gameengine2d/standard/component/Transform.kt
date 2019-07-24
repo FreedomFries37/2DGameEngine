@@ -1,7 +1,7 @@
 package joshuaradin.gameengine2d.standard.component
 
-import joshuaradin.gameengine2d.core.GameObject
-import joshuaradin.gameengine2d.core.ObjectBehavior
+import joshuaradin.gameengine2d.core.basic.GameObject
+import joshuaradin.gameengine2d.core.basic.ObjectBehavior
 import joshuaradin.gameengine2d.standard.type.Line
 import joshuaradin.gameengine2d.standard.type.Point
 import joshuaradin.gameengine2d.standard.type.Rotation
