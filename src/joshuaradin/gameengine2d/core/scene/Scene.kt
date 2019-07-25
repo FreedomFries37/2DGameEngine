@@ -2,6 +2,7 @@ package joshuaradin.gameengine2d.core.scene
 
 import joshuaradin.gameengine2d.core.basic.Component
 import joshuaradin.gameengine2d.core.basic.GameObject
+import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Camera2D
 import java.io.Serializable
 import kotlin.reflect.KClass
@@ -21,7 +22,7 @@ class Scene (val name: String = "scene" + (++numScenes)) : Serializable{
      * @param factory the factory for creating the object, default is an empty
      * @return returns the [GameObject] created
      */
-    fun createGameObject(factory: () -> GameObject = { GameObject.createEmpty(baseObject)}) : GameObject {
+    fun createGameObject(factory: () -> GameObject = { baseObject!!.createEmpty(baseObject)}) : GameObject {
         if(!initialized) throw SceneNotInitializedException()
         val gO: GameObject = factory()
         if(gO.parent != baseObject) gO.setParent(baseObject!!)
@@ -35,6 +36,8 @@ class Scene (val name: String = "scene" + (++numScenes)) : Serializable{
 
     fun initialize() {
         baseObject = GameObject.createEmpty(null)
+        baseObject?.scene = this
+        GameObjectTracker.instance.fixAssociatedScene(baseObject)
         initialized = true
 
         val camera = createGameObject()

@@ -13,6 +13,7 @@ object Center {
         val xLine: LineRenderer? = gameObject.addComponent()
         xLine?.line = Line(Point(-1000, 0), Point(1000, 0))
 
+
         val yLine: LineRenderer? = gameObject.addComponent()
         yLine?.line = Line(Point(0, -1000), Point(0, 1000))
     }

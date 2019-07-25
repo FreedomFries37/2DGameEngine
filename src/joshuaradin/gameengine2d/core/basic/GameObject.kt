@@ -16,10 +16,24 @@ import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.memberProperties
 
 
-class GameObject(private var scene: Scene, private var _parent: GameObject?, children: List<GameObject>, name: String = scene.createQualifiedName<GameObject>()) : Serializable {
-    var name = scene.createQualifiedName(name)
+class GameObject(scene: Scene, private var _parent: GameObject?, children: List<GameObject>, name: String = scene.createQualifiedName<GameObject>()) : EngineIntractable(), Serializable {
+    private var _name = scene.createQualifiedName(name)
+    var name: String
+        get() =_name
+        set(value) {
+            _name = scene.createQualifiedName(value)
+        }
+    var started: Boolean = false
     val parent: GameObject?
         get() = _parent
+    private var _scene = scene
+    var scene: Scene
+        get() = _scene
+        set(value) {
+            if(parent == null || parent?.scene == value){
+                _scene = value
+            }
+        }
 
     companion object {
         fun createEmpty(parent: GameObject?) : GameObject {
@@ -33,8 +47,7 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
         }
 
         fun instantiate(other: GameObject) : GameObject {
-            val created: GameObject =
-                createEmpty(other.parent)
+            val created: GameObject = createEmpty(other.parent)
             created.name = other.name + " copy"
             for (component in other.components) {
                 val deepClone = ComponentCloner().deepClone(component)
@@ -89,6 +102,9 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
     }
 
     val transform = getComponent<Transform>()!!
+
+
+
 
 
     fun addChild(o: GameObject) : Boolean {
@@ -149,11 +165,19 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
         val created: GameObject = createEmpty(parent)
         created.name = other.name + " copy"
         for (component in other.components) {
-            val deepClone = ComponentCloner().deepClone(component)
-            if(deepClone == null) throw IOException()
-            created.addComponent(deepClone)
-            println(deepClone)
+            if(component is Transform){
+                created.transform.position = component.position
+                created.transform.rotation = component.rotation
+                created.transform.scale = component.scale
+            }else {
+                val deepClone = ComponentCloner().deepClone(component)
+                if (deepClone == null) throw IOException()
+                created.addComponent(deepClone)
+                println(deepClone)
+            }
         }
+        created.init()
+        if(started) created.start()
         GameObjectTracker.instance.printAllObjectSceneAndPosition()
         return created
     }
@@ -179,6 +203,9 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
         components.add(component)
         component.gameObject = this
         component.init()
+        if(started){
+            component.start()
+        }
         return component
     }
 
@@ -237,39 +264,68 @@ class GameObject(private var scene: Scene, private var _parent: GameObject?, chi
 
 
 
-    fun init(){
+    override fun init(){
         for (component in components.filter { it.enabled }) {
             component.init()
         }
     }
 
-    fun start() {
+    override fun start() {
         for (component in  components.filter { it.enabled }) {
             component.start()
         }
     }
 
-    fun update() {
+    override fun update() {
         for (component in components.filter { it.enabled }) {
             component.update()
         }
     }
 
-    fun onBoundryEnter(other: GameObject){
+    override fun onBoundaryEnter(other: GameObject){
         for (component in  components.filter { it.enabled }) {
             component.onBoundaryEnter(other)
         }
     }
 
-    fun onBoundryStay(other: GameObject){
+    override fun onBoundaryStay(other: GameObject){
         for (component in  components.filter { it.enabled }) {
             component.onBoundaryStay(other)
         }
     }
 
-    fun onBoundryExit(other: GameObject){
+    override fun onBoundaryExit(other: GameObject){
         for (component in  components.filter { it.enabled }) {
             component.onBoundaryExit(other)
+        }
+    }
+
+    override fun onMouseClick() {
+        for (component in  components.filter { it.enabled }) {
+            component.onMouseClick()
+        }
+    }
+
+    override fun onMouseDown() {
+        for (component in  components.filter { it.enabled }) {
+            component.onMouseDown()
+        }}
+
+    override fun onMouseUp() {
+        for (component in  components.filter { it.enabled }) {
+            component.onMouseUp()
+        }
+    }
+
+    override fun onMouseStay() {
+        for (component in  components.filter { it.enabled }) {
+            component.onMouseStay()
+        }
+    }
+
+    override fun onMouseExit() {
+        for (component in  components.filter { it.enabled }) {
+            component.onMouseExit()
         }
     }
 }

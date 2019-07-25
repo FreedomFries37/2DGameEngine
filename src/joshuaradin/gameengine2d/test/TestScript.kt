@@ -5,6 +5,7 @@ import javafx.scene.input.KeyCode
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.basic.ObjectBehavior
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
+import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
 import joshuaradin.gameengine2d.standard.component.LineRenderer
 import joshuaradin.gameengine2d.standard.component.ShapeRenderer
 import joshuaradin.gameengine2d.standard.type.*
@@ -22,9 +23,13 @@ class TestScript : ObjectBehavior() {
 
     override fun start() {
         shapeRenderer = addComponent()
+        val interferenceBoundary = addComponent<InterferenceBoundary>()
+        val square = Square(Point.ZERO, 40.0)
+
+        interferenceBoundary?.boundry = square
         val lineRenderer = addComponent<LineRenderer>()
 
-        val quadrilateral = Square(Point.ZERO, 40.0)
+        val quadrilateral = square
 
         shapeRenderer?.shape = quadrilateral
 
@@ -105,5 +110,9 @@ class TestScript : ObjectBehavior() {
         }
 
 
+    }
+
+    override fun onMouseClick() {
+        println("Yahaha you found me")
     }
 }

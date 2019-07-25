@@ -54,6 +54,7 @@ object Run {
         runningWindow?.currentCamera = info.initialScene.getGameObjectWithComponent<Camera2D>()?.getComponent()
 
         while (runningWindow?.isShowing!!) {
+
             val startScene = goTracker.currentScene
             val startFrameTime = System.nanoTime()
 

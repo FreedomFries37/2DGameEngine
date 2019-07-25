@@ -3,7 +3,7 @@ package joshuaradin.gameengine2d.core.service
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.listeners.Event
 import joshuaradin.gameengine2d.core.scene.Scene
-import joshuaradin.gameengine2d.standard.component.InterferenceBoundry
+import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
 import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 
 class TrackerMissingException : Exception("Game Object Tracker Missing")
@@ -60,6 +60,25 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         }
     }
 
+    fun fixAssociatedScene(gameObject: GameObject?) {
+        if(gameObject == null) return
+
+        if(!gameObjectToInitalScene.containsKey(gameObject)){
+            add(gameObject, gameObject.scene)
+            return
+        }
+        val originalScene = gameObjectToInitalScene[gameObject]
+        if (originalScene != gameObject.scene) {
+            if(!awareOfScene(gameObject.scene)){
+                addScene(gameObject.scene)
+            }
+
+            activeSceneToGameObjects[originalScene]?.remove(gameObject)
+            activeSceneToGameObjects[gameObject.scene]?.add(gameObject)
+            gameObjectToInitalScene[gameObject] = gameObject.scene
+        }
+    }
+
     fun add(gameObject: GameObject, activeScene: Scene) {
         if(!awareOfScene(activeScene)) addScene(activeScene)
 
@@ -94,7 +113,12 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         for (activeObject in _activeObjects) {
             if(activeObject !in startedObjects) {
                 startedObjects.add(activeObject)
-                activeObject.start()
+                if(!activeObject.started){
+                    activeObject.started = true
+                    activeObject.start()
+
+                }
+
             }
         }
     }
@@ -112,9 +136,9 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         return flatten
     }
 
-    fun colliders() : List<InterferenceBoundry> {
-        val map = activeObjects.filter { it.hasComponent<InterferenceBoundry>()}
-            .map { it.getComponents(InterferenceBoundry::class) }
+    fun colliders() : List<InterferenceBoundary> {
+        val map = activeObjects.filter { it.hasComponent<InterferenceBoundary>()}
+            .map { it.getComponents(InterferenceBoundary::class) }
         val flattened = map.flatten().toMutableList()
         flattened.removeIf { it.isTrigger }
         return flattened

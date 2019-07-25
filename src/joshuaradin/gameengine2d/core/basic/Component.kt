@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 class GameObjectSetException : Exception("Can't reassign game object")
 
 
-abstract class Component : Cloneable, Serializable{
+abstract class Component : EngineIntractable(), Cloneable, Serializable{
 
 
 
@@ -24,19 +24,12 @@ abstract class Component : Cloneable, Serializable{
             gameObjectSet = true
             _gameObject = value
         }
-    var enabled: Boolean = true
     private var gameObjectSet = false
 
 
     val transform: Transform?
         get() {return gameObject?.getComponent()}
 
-    abstract fun init()
-    abstract fun start()
-    abstract fun update()
-    abstract fun onBoundaryEnter(other: GameObject)
-    abstract fun onBoundaryStay(other: GameObject)
-    abstract fun onBoundaryExit(other: GameObject)
 
     inline fun <reified T : Component> addComponent() : T? {
         return gameObject?.addComponent()

@@ -54,7 +54,7 @@ class GameWindow(name: String, dimension: Dimension, gameObjectTracker: GameObje
         pack()
         isVisible = true
 
-        Screen(width, height)
+        Screen(mainPanel.width, mainPanel.height, this)
     }
 
 

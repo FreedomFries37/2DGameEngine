@@ -40,12 +40,12 @@ open class Shape protected constructor(points: List<Point>) : PositionAdjustable
         this.points = points.sortedBy { (atan((it.y - y) / (it.x - x)) + (if ((it.x - x) < 0) PI else 0.0)) }
 
         val lines = mutableListOf<Line>()
-        for (i in 0 until numPoints - 1) {
-            val a = points[i]; val b = points[i+1]
+        for (i in points.size - 1 downTo 1) {
+            val a = points[i]; val b = points[i-1]
             val l = Line(a, b)
             lines.add(l)
         }
-        val lastLine = Line(points.last(), points.first())
+        val lastLine = Line(points.first(), points.last())
         lines.add(lastLine)
         this.lines = lines
 

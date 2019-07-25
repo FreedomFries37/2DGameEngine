@@ -29,6 +29,18 @@ abstract class ObjectBehavior : Component(), IMouseListener {
 
     }
 
+    override fun onMouseClick() {
+
+    }
+
+    override fun onMouseStay() {
+
+    }
+
+    override fun onMouseExit() {
+
+    }
+
     override fun init() {
 
     }

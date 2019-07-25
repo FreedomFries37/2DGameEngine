@@ -48,11 +48,26 @@ data class Line (var u: Point = Point.ZERO, var v: Point = Point.ZERO) : Positio
         return copy(u = uDiffOriginal + newCenter, v = vDiffOriginal + newCenter)
     }
 
-    fun toFunction() : (x: Double) -> Double = { x -> (v.y - u.y) / (v.x - u.x) * x + u.y}
+    fun toFunction() : (x: Double) -> Double = { x ->
+        val m = (v.y - u.y) / (v.x - u.x)
+        val b = u.y
+        m*x + b
+    }
 
     fun pointAbove(point: Point) : Boolean {
-        return point.y > asFunction(point.x)
+        if(u.x == v.x) return if (u.y < v.y) {
+            point.x < u.x
+        } else {
+            point.x >= u.x
+        }
+        return if(isForward()) {
+            point.y > asFunction(point.x)
+        } else {
+            point.y < asFunction(point.x)
+        }
     }
+
+    fun isForward() = v.x > u.x
 
     fun pointBelow(point: Point) : Boolean = !pointAbove(point)
 }
