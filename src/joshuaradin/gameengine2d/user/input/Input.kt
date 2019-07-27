@@ -68,7 +68,7 @@ object Input {
      */
     fun getKeyDown(keycode: Int) : Boolean{
         if(!keysChecked.containsKey(keycode)) return false
-        val output = !keysChecked[keycode]!!
+        val output = !(keysChecked[keycode] ?: true)
         keysChecked[keycode] = true
         return output
     }

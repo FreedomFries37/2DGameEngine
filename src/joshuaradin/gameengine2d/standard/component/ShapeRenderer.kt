@@ -24,11 +24,17 @@ class ShapeRenderer : Renderer2DComponent() {
         if(shape != null) {
             g.stroke = BasicStroke(borderWidth*transform.scale.displacement().toFloat())
 
+
+
+
+            val pointOnScreen = camera2D.getPointOnScreen(transform.gameObject!!)
+
+
             var adjustedShape = shape!!
             adjustedShape *= transform.scale
 
             val distanceFromCamera = getDistanceFromCamera(transform, camera2D)
-            adjustedShape += distanceFromCamera
+            adjustedShape += pointOnScreen.asVector2()
 
             val rotDiff = transform.rotation - camera2D.transform!!.rotation
             adjustedShape = adjustedShape rotate rotDiff
@@ -54,5 +60,9 @@ class ShapeRenderer : Renderer2DComponent() {
         }
 
         return Polygon(xPoints.toIntArray(), yPoints.toIntArray(), numPoints)
+    }
+
+    override fun toString(): String {
+        return "$shape at ${shape?.center}"
     }
 }

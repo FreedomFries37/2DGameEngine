@@ -1,6 +1,7 @@
 package joshuaradin.gameengine2d.standard.type
 
 import java.io.Serializable
+import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -56,6 +57,12 @@ data class Vector2 (var x: Double, var y: Double) : Serializable{
         vector2.x = x % .00001
         vector2.y = y % .00001
         return vector2
+    }
+
+    fun angle(other: Vector2 = Vector2(0,0)) : Rotation {
+        val d = x - other.x
+        if(d == 0.0) return if(y > other.y) Rotation.createDeg(90.0) else Rotation.createDeg(-90.0)
+        return Rotation(atan((y - other.y) / d))
     }
 
     override fun equals(other: Any?): Boolean {

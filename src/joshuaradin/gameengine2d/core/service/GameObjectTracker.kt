@@ -4,6 +4,7 @@ import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.listeners.Event
 import joshuaradin.gameengine2d.core.scene.Scene
 import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
+import joshuaradin.gameengine2d.user.connecting.Time
 import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 
 class TrackerMissingException : Exception("Game Object Tracker Missing")
@@ -43,8 +44,8 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
     private val objectSet: MutableSet<GameObject> = mutableSetOf()
     private val activeSceneToGameObjects = mutableMapOf<Scene, MutableSet<GameObject>>()
     private val gameObjectToInitalScene = mutableMapOf<GameObject, Scene>()
-    private val _activeObjects: MutableSet<GameObject> = mutableSetOf()
-    val activeObjects: Set<GameObject>
+    private val _activeObjects: MutableList<GameObject> = mutableListOf()
+    val activeObjects: List<GameObject>
         get() {return _activeObjects; }
     private val startedObjects: MutableSet<GameObject> = mutableSetOf()
 
@@ -76,6 +77,9 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
             activeSceneToGameObjects[originalScene]?.remove(gameObject)
             activeSceneToGameObjects[gameObject.scene]?.add(gameObject)
             gameObjectToInitalScene[gameObject] = gameObject.scene
+            if(gameObject.scene == currentScene) {
+                _activeObjects.add(gameObject)
+            }
         }
     }
 
@@ -86,6 +90,9 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         objectSet.add(gameObject)
         gameObjectToInitalScene[gameObject] = activeScene
         gameObject.init()
+        if(gameObject.scene == currentScene) {
+            _activeObjects.add(gameObject)
+        }
     }
 
     fun addScene(scene: Scene) {
@@ -110,14 +117,14 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
     }
 
     fun start() {
-        for (activeObject in _activeObjects) {
-            if(activeObject !in startedObjects) {
+        for (i in 0 until _activeObjects.size) {
+            val activeObject = _activeObjects[i]
+            if(!activeObject.started) {
                 startedObjects.add(activeObject)
-                if(!activeObject.started){
-                    activeObject.started = true
-                    activeObject.start()
+                activeObject.started = true
+                activeObject.start()
 
-                }
+
 
             }
         }
@@ -154,11 +161,43 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         return _activeObjects.find { it.name == s }
     }
 
+    fun GameObject.level() : Int {
+        var output = 0
+        if(parent != null) output += parent!!.level() + 1
+        return output
+    }
+
     fun printAllObjectSceneAndPosition() {
+        println("Current Running Time = " + "%.2f sec".format(Time.totalTime))
         for (scene in activeSceneToGameObjects.keys) {
             println("#${scene.name}")
             for (gameObject in activeSceneToGameObjects[scene]!!) {
-                println("\t${gameObject.name} - " + gameObject.transform.position + " @ ${gameObject.transform.rotation} [global: ${gameObject.getGlobalPosition()}]")
+                print("\t" + "  ".repeat(gameObject.level()))
+                println("${gameObject.name} - " + gameObject.transform.position + " @ ${gameObject.transform.rotation} [global: ${gameObject.getGlobalPosition()}]")
+            }
+        }
+    }
+
+    fun printFullInfo() {
+        println("Current Running Time = " + "%.2f sec".format(Time.totalTime))
+        for (scene in activeSceneToGameObjects.keys) {
+            println("#${scene.name}")
+            for (gameObject in activeSceneToGameObjects[scene]!!) {
+                print("\t" + "  ".repeat(gameObject.level()))
+                if(gameObject.enabled) {
+                    val hasComponent = gameObject.hasComponent<Renderer2DComponent>()
+                    if(gameObject.started && hasComponent){
+                        print("[#] ")
+                    }else if(hasComponent) {
+                        print("[-] ")
+                    }else print("[ ] ")
+                } else print("    ")
+
+                println("$gameObject")
+                for (component in gameObject.getAllComponents()) {
+                    print("\t    " + "  ".repeat(gameObject.level()) + " +")
+                    println("[${component.javaClass.simpleName}] " + component)
+                }
             }
         }
     }

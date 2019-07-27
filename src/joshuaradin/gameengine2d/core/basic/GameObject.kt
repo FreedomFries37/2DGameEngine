@@ -5,8 +5,8 @@ import joshuaradin.gameengine2d.core.scene.SceneManager
 import joshuaradin.gameengine2d.core.service.ComponentCloner
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Transform
+import joshuaradin.gameengine2d.standard.type.Rotation
 import joshuaradin.gameengine2d.standard.type.Vector2
-import java.io.IOException
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -46,19 +46,6 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
             } else GameObject(SceneManager.stagingScene, parent, listOf(), name)
         }
 
-        fun instantiate(other: GameObject) : GameObject {
-            val created: GameObject = createEmpty(other.parent)
-            created.name = other.name + " copy"
-            for (component in other.components) {
-                val deepClone = ComponentCloner().deepClone(component)
-                if(deepClone == null) throw IOException()
-                created.addComponent(deepClone)
-                println(deepClone)
-            }
-
-            return created
-        }
-
         private inline fun <reified T : Component> loopInternal(created: GameObject, component: T) {
             val createdComponent = created.addComponent(component::class)
             if (createdComponent != null) component.applyTo(createdComponent)
@@ -89,11 +76,11 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
     private val children: MutableList<GameObject> = children.toMutableList()
     var deactivateOnSceneChange: Boolean = true
     private val components: MutableList<Component> = mutableListOf()
-
+    val numComponents: Int get() = components.size
 
 
     init {
-        GameObjectTracker.instance?.add(this, scene)
+        GameObjectTracker.instance.add(this, scene)
         parent?.children?.add(this)
         for (child in children) {
             child.setParent(this)
@@ -137,6 +124,15 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         this.transform.applyGlobalToLocal(p.getGlobalPosition())
     }
 
+    fun removeParent() {
+        var ptr = this
+        while (ptr.parent != null){
+            ptr = ptr.parent as GameObject
+        }
+        if(ptr == this) return
+        setParent(ptr)
+    }
+
     /**
      *
      * @param levels the amount of levels to search for children
@@ -162,6 +158,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
     }
 
     fun instantiate(other: GameObject, parent: GameObject = this) : GameObject {
+        /*
         val created: GameObject = createEmpty(parent)
         created.name = other.name + " copy"
         for (component in other.components) {
@@ -170,7 +167,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
                 created.transform.rotation = component.rotation
                 created.transform.scale = component.scale
             }else {
-                val deepClone = ComponentCloner().deepClone(component)
+                val deepClone = ComponentCloner.serializationClone(component)
                 if (deepClone == null) throw IOException()
                 created.addComponent(deepClone)
                 println(deepClone)
@@ -179,7 +176,21 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         created.init()
         if(started) created.start()
         GameObjectTracker.instance.printAllObjectSceneAndPosition()
-        return created
+
+         */
+        val created = with(ComponentCloner){
+            val o = other.cloneGameObject()
+            o?.setParent(parent)
+            o
+        }
+        created?.scene = parent.scene
+        GameObjectTracker.instance.fixAssociatedScene(created)
+        created?.init()
+        if(started){
+            created?.started = true
+            created?.start()
+        }
+        return created!!
     }
 
 
@@ -207,6 +218,10 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
             component.start()
         }
         return component
+    }
+
+    fun  getComponentReference(index: Int) : ComponentReference<*> {
+        return ComponentReference(components[index])
     }
 
     inline fun <reified T : Component> getComponent() : T? {
@@ -249,8 +264,18 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
     }
 
     fun getGlobalPosition() : Vector2 {
-        var output: Vector2 = transform.position
+        var output = Vector2.distanceWithRot(transform.position.displacement(),
+            transform.position.angle() + (parent?.getParentsRotation() ?: Rotation(0.0)))
         if(parent != null) output += parent!!.getGlobalPosition()
+        return output
+    }
+
+    fun getParentsRotation() : Rotation {
+        var output = Rotation(0.0)
+        if(parent != null) {
+            output += parent!!.transform.rotation
+            output += parent!!.getParentsRotation()
+        }
         return output
     }
 
@@ -319,6 +344,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
 
     override fun onMouseStay() {
         for (component in  components.filter { it.enabled }) {
+
             component.onMouseStay()
         }
     }

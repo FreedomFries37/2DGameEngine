@@ -2,10 +2,13 @@ package joshuaradin.gameengine2d.standard.type
 
 import java.io.Serializable
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.tan
 
 class Rotation(radians: Double = 0.0) : Serializable{
 
-    private var _radians: Double = radians
+    private var _radians: Double = radians % (2 * PI)
     var radians: Double
         get() = _radians
         set(value) {
@@ -53,6 +56,18 @@ class Rotation(radians: Double = 0.0) : Serializable{
         val output = Rotation(this)
         output.radians = radians % .000001
         return output
+    }
+
+    fun sin() : Double {
+        return sin(radians)
+    }
+
+    fun cos() : Double {
+        return cos(radians)
+    }
+
+    fun tan() : Double {
+        return tan(radians)
     }
 
     override fun toString(): String {

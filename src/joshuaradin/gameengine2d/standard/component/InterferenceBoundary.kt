@@ -12,7 +12,7 @@ import java.awt.event.MouseListener
 
 open class InterferenceBoundary : ObjectBehavior(), MouseListener {
 
-    var isTrigger = false
+    var isTrigger = true
     var boundry: Shape = Square(Point.ZERO)
 
     private val currentCollided = mutableSetOf<GameObject>()
@@ -25,6 +25,8 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
     }
 
     override fun update() {
+
+
         if(isTrigger) {
             for (gameObject in currentCollided) {
                 gameObject.onBoundaryStay(this.gameObject!!)
@@ -80,9 +82,8 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
         val (cgX, cgY) = Screen.camera()?.gameObject!!.getGlobalPosition()
         effectiveGlobalPosition = Point(x + cgX, y + cgY)
 
-        println("Mouse Click at Effective Global Position $effectiveGlobalPosition")
 
-        if(enabled && boundry.inBounds(effectiveGlobalPosition)){
+        if(enabled && boundry.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
             gameObject?.onMouseClick()
         }
     }
@@ -103,9 +104,8 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
         val (cgX, cgY) = Screen.camera()?.gameObject!!.getGlobalPosition()
         effectiveGlobalPosition = Point(x - cgX, y - cgY)
 
-        println("Mouse up at Effective Global Position $effectiveGlobalPosition")
 
-        if(enabled && boundry.inBounds(effectiveGlobalPosition)){
+        if(enabled && boundry.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
             gameObject?.onMouseUp()
         }
     }
@@ -120,9 +120,8 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
         val (cgX, cgY) = Screen.camera()?.gameObject!!.getGlobalPosition()
         effectiveGlobalPosition = Point(x - cgX, y - cgY)
 
-        println("Mouse down at Effective Global Position $effectiveGlobalPosition")
 
-        if(enabled && boundry.inBounds(effectiveGlobalPosition)){
+        if(enabled && boundry.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
             gameObject?.onMouseDown()
         }
     }

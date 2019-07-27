@@ -54,3 +54,5 @@ abstract class Component : EngineIntractable(), Cloneable, Serializable{
 
 
 }
+
+class ComponentReference<T : Component> (val comp: T)

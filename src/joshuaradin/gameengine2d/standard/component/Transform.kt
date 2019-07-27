@@ -13,7 +13,7 @@ class Transform : ObjectBehavior() {
 
     private class State constructor(val position: Vector2, val scale: Vector2, val rotation: Rotation)
 
-    var _isLocal = true
+    private var _isLocal = true
     var isLocal: Boolean
         get() = _isLocal
         set(value) {

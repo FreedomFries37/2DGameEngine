@@ -64,4 +64,8 @@ abstract class ObjectBehavior : Component(), IMouseListener {
     override fun onBoundaryStay(other: GameObject) {
 
     }
+
+    override fun toString(): String {
+        return ""
+    }
 }

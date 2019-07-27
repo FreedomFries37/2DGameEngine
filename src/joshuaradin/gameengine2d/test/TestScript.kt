@@ -9,6 +9,7 @@ import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
 import joshuaradin.gameengine2d.standard.component.LineRenderer
 import joshuaradin.gameengine2d.standard.component.ShapeRenderer
 import joshuaradin.gameengine2d.standard.type.*
+import joshuaradin.gameengine2d.user.connecting.Screen
 import joshuaradin.gameengine2d.user.connecting.Time
 import joshuaradin.gameengine2d.user.input.Input
 
@@ -40,8 +41,10 @@ class TestScript : ObjectBehavior() {
 
         cameraObject = GameObjectTracker.instance.find("Camera")
 
-        gameObject?.instantiate(Center.gameObject)
-
+        val center = gameObject?.instantiate(Center.gameObject)
+        center?.removeParent()
+        transform?.position = Vector2(10, 10)
+        Screen.camera()?.transform?.rotation= Rotation.createDeg(45.0)
     }
 
     override fun update() {
@@ -82,24 +85,29 @@ class TestScript : ObjectBehavior() {
         }
 
         if (Input.getKey(KeyCode.UP)) {
-            line!!.u += Vector2.distanceWithRot(power, Rotation.createDeg(-90.0))* Time.deltaTime
+            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(-90.0))* Time.deltaTime
         }
 
         if (Input.getKey(KeyCode.LEFT)) {
-            line!!.u += Vector2.distanceWithRot(power, Rotation.createDeg(180.0))* Time.deltaTime
+            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(180.0))* Time.deltaTime
 
         }
         if (Input.getKey(KeyCode.DOWN)) {
-            line!!.u += Vector2.distanceWithRot(power, Rotation.createDeg(90.0))* Time.deltaTime
+            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(90.0))* Time.deltaTime
 
         }
         if (Input.getKey(KeyCode.RIGHT)) {
-            line!!.u += Vector2.distanceWithRot(power, Rotation.createDeg(0.0))* Time.deltaTime
+            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(0.0))* Time.deltaTime
 
         }
 
+        line!!.u = transform!!.position.toPoint()
+
         if (Input.getKeyDown(KeyCode.F)) {
             GameObjectTracker.instance.printAllObjectSceneAndPosition()
+        }
+        if (Input.getKeyDown(KeyCode.G)) {
+            GameObjectTracker.instance.printFullInfo()
         }
 
         if(cameraObject != null && line != null){

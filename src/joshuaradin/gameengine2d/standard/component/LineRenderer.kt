@@ -26,7 +26,10 @@ class LineRenderer : Renderer2DComponent() {
         g.drawLine(lineAdj.u.x.toInt(), lineAdj.u.y.toInt(), lineAdj.v.x.toInt(), lineAdj.v.y.toInt())
     }
 
+    override fun toString(): String {
+        return line.toString()
 
+    }
 
 
 }

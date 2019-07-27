@@ -70,4 +70,9 @@ data class Line (var u: Point = Point.ZERO, var v: Point = Point.ZERO) : Positio
     fun isForward() = v.x > u.x
 
     fun pointBelow(point: Point) : Boolean = !pointAbove(point)
+    override fun toString(): String {
+        return "Line(u=$u, v=$v)"
+    }
+
+
 }

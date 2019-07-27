@@ -74,4 +74,8 @@ class Scene (val name: String = "scene" + (++numScenes)) : Serializable{
         val max: Int = filter.maxBy { it }!!
         return  max
     }
+
+    override fun toString(): String {
+        return name
+    }
 }
