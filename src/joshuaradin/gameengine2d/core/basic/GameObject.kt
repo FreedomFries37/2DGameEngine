@@ -264,9 +264,9 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
     }
 
     fun getGlobalPosition() : Vector2 {
-        var output = Vector2.distanceWithRot(transform.position.displacement(),
-            transform.position.angle() + (parent?.getParentsRotation() ?: Rotation(0.0)))
-        if(parent != null) output += parent!!.getGlobalPosition()
+        if(parent == null) return transform.position
+        var output = parent!!.getGlobalPosition()
+        output += transform.position rotate parent!!.transform.rotation
         return output
     }
 

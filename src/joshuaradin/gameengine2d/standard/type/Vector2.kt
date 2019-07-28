@@ -1,10 +1,7 @@
 package joshuaradin.gameengine2d.standard.type
 
 import java.io.Serializable
-import kotlin.math.atan
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sin
+import kotlin.math.*
 
 
 data class Vector2 (var x: Double, var y: Double) : Serializable{
@@ -61,8 +58,19 @@ data class Vector2 (var x: Double, var y: Double) : Serializable{
 
     fun angle(other: Vector2 = Vector2(0,0)) : Rotation {
         val d = x - other.x
-        if(d == 0.0) return if(y > other.y) Rotation.createDeg(90.0) else Rotation.createDeg(-90.0)
+        if(d == 0.0) return if(y > other.y) {
+            Rotation.createDeg(90.0)
+        } else if( y < other.y) {
+            Rotation.createDeg(-90.0)
+        } else {
+            Rotation.createDeg(0.0)
+        }
         return Rotation(atan((y - other.y) / d))
+    }
+
+    infix fun rotate(rot: Rotation) : Vector2 {
+        val angle = angle() + rot
+        return distanceWithRot(this.displacement().absoluteValue, angle)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -74,6 +82,8 @@ data class Vector2 (var x: Double, var y: Double) : Serializable{
 
         return true
     }
+
+
 
     override fun hashCode(): Int {
         var result = x.hashCode()
