@@ -1,5 +1,6 @@
 package joshuaradin.gameengine2d.standard.type
 
+import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import java.io.Serializable
 
 interface PositionAdjustable<T> : Serializable{
@@ -26,7 +27,10 @@ interface PositionAdjustable<T> : Serializable{
     }
 
     infix fun scaleTo(d: Double) : T {
-        return this scaleTo Vector2.distanceWithRot(d, Rotation.createDeg(45.0))
+        return this scaleTo Vector2.distanceWithRot(
+            d,
+            Rotation.createDeg(45.0)
+        )
     }
 
     operator fun times(d: Double) : T {

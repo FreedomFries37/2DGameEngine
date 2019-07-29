@@ -1,10 +1,12 @@
 package joshuaradin.gameengine2d.standard.type
 
+import joshuaradin.gameengine2d.standard.type.geometry.Point
+import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import java.io.Serializable
 import kotlin.math.*
 
 
-data class Vector2 (var x: Double, var y: Double) : Serializable{
+data class Vector2 (var x: Double, var y: Double) :  Serializable{
 
     companion object {
 
@@ -21,17 +23,31 @@ data class Vector2 (var x: Double, var y: Double) : Serializable{
 
 
 
-    operator fun plus(other: Vector2) : Vector2{
-        return Vector2(x + other.x, y + other.y)
-    }
 
     operator fun plus(other: Int) : Vector2{
         return Vector2(x + other, y + other)
     }
 
-    operator fun minus(other: Vector2) : Vector2{
-        return Vector2(x - other.x, y - other.y)
+    operator fun plus(other: Double) : Vector2{
+        return Vector2(x + other, y + other)
     }
+
+    operator fun plus(other: Vector2) : Vector2{
+        return Vector2(x + other.x, y + other.y)
+    }
+
+    operator fun minus(other: Int) : Vector2{
+        return Vector2(x + other, y + other)
+    }
+
+    operator fun minus(other: Double) : Vector2 {
+        return Vector2(x - other, y - other)
+    }
+
+    operator fun minus(other: Vector2) : Vector2{
+        return Vector2(x + other.x, y + other.y)
+    }
+
 
     operator fun unaryMinus() : Vector2 {
         return Vector2(-x, -y)
@@ -44,6 +60,7 @@ data class Vector2 (var x: Double, var y: Double) : Serializable{
     operator fun times(other: Double) : Vector2{
         return Vector2(x * other, y * other)
     }
+
 
     fun toPoint() : Point {
         return Point(x, y)

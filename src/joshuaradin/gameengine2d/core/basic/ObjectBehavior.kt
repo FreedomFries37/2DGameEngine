@@ -53,6 +53,10 @@ abstract class ObjectBehavior : Component(), IMouseListener {
 
     }
 
+    override fun fixedUpdate() {
+
+    }
+
     override fun onBoundaryEnter(other: GameObject){
 
     }

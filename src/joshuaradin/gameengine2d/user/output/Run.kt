@@ -53,6 +53,8 @@ object Run {
         goTracker.sceneChange(info.initialScene)
         runningWindow?.currentCamera = info.initialScene.getGameObjectWithComponent<Camera2D>()?.getComponent()
 
+        var timer = 0.0
+
         while (runningWindow?.isShowing!!) {
 
             val startScene = goTracker.currentScene
@@ -65,6 +67,11 @@ object Run {
             val d = (endFrameTime - startFrameTime) / 10.0.pow(9)
 
             Time.deltaTime = d
+            timer += Time.deltaTime
+            if(timer >= Time.fixedDeltaTime) {
+                timer = 0.0
+                goTracker.fixedUpdate()
+            }
 
             val fps = 1.0 / d
 

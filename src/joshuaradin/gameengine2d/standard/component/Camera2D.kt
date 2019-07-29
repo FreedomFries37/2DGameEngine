@@ -2,9 +2,10 @@ package joshuaradin.gameengine2d.standard.component
 
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.basic.ObjectBehavior
-import joshuaradin.gameengine2d.standard.type.Point
-import joshuaradin.gameengine2d.standard.type.Square
+import joshuaradin.gameengine2d.standard.component.rendering.ShapeRenderer
 import joshuaradin.gameengine2d.standard.type.Vector2
+import joshuaradin.gameengine2d.standard.type.geometry.Point
+import joshuaradin.gameengine2d.standard.type.geometry.Square
 import joshuaradin.gameengine2d.user.connecting.Screen
 import java.awt.Color
 

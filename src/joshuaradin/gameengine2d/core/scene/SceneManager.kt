@@ -3,8 +3,8 @@ package joshuaradin.gameengine2d.core.scene
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.scene.SceneManager.addScene
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
-import joshuaradin.gameengine2d.standard.type.Rotation
 import joshuaradin.gameengine2d.standard.type.Vector2
+import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 
 object SceneManager {
 

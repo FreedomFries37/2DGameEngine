@@ -1,8 +1,9 @@
-package joshuaradin.gameengine2d.standard.component
+package joshuaradin.gameengine2d.standard.component.rendering
 
+import joshuaradin.gameengine2d.standard.component.Camera2D
+import joshuaradin.gameengine2d.standard.component.Transform
 import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 import java.awt.Graphics2D
-import java.awt.Image
 import java.awt.image.BufferedImage
 import java.awt.image.ImageObserver
 import java.io.File

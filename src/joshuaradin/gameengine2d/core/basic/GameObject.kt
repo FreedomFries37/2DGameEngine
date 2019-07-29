@@ -5,8 +5,8 @@ import joshuaradin.gameengine2d.core.scene.SceneManager
 import joshuaradin.gameengine2d.core.service.ComponentCloner
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Transform
-import joshuaradin.gameengine2d.standard.type.Rotation
 import joshuaradin.gameengine2d.standard.type.Vector2
+import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty

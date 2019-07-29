@@ -1,7 +1,9 @@
-package joshuaradin.gameengine2d.standard.component
+package joshuaradin.gameengine2d.standard.component.rendering
 
 
-import joshuaradin.gameengine2d.standard.type.Shape
+import joshuaradin.gameengine2d.standard.component.Camera2D
+import joshuaradin.gameengine2d.standard.component.Transform
+import joshuaradin.gameengine2d.standard.type.geometry.Shape
 import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 import java.awt.BasicStroke
 import java.awt.Color

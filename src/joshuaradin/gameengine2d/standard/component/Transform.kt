@@ -2,10 +2,10 @@ package joshuaradin.gameengine2d.standard.component
 
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.basic.ObjectBehavior
-import joshuaradin.gameengine2d.standard.type.Line
-import joshuaradin.gameengine2d.standard.type.Point
-import joshuaradin.gameengine2d.standard.type.Rotation
 import joshuaradin.gameengine2d.standard.type.Vector2
+import joshuaradin.gameengine2d.standard.type.geometry.Line
+import joshuaradin.gameengine2d.standard.type.geometry.Point
+import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import java.lang.Math.cos
 import java.lang.Math.sin
 
@@ -86,7 +86,10 @@ class Transform : ObjectBehavior() {
         val parentOldCenter = parentPrevState.position
         val parentNewCenter = parentCurrentState.position
 
-        val line = Line(Point.ZERO, myState.position.toPoint())
+        val line = Line(
+            Point.ZERO,
+            myState.position.toPoint()
+        )
 
         var radialDistance = line.length
         val newRot: Rotation = myState.rotation + rotDifference
@@ -94,7 +97,7 @@ class Transform : ObjectBehavior() {
 
 
         val scaleDifference = parentCurrentState.scale - parentPrevState.scale
-        val scaleIncreasing = scaleDifference + 1
+        val scaleIncreasing = scaleDifference + 1.0
         val newScale: Vector2 = scaleIncreasing*myState.scale
 
 
@@ -103,7 +106,7 @@ class Transform : ObjectBehavior() {
         val newY = radialDistance*newScale.y*sin(angleFromCenter + rotDifference.radians)
 
         val parentChangeVector = parentNewCenter - parentOldCenter
-        val newPosition: Vector2 = Vector2(newX, newY) + parentChangeVector
+        val newPosition: Vector2 = (Vector2(newX, newY) + parentChangeVector)
 
         State(newPosition, newScale, newRot).apply()
     }

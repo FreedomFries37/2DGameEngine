@@ -1,4 +1,4 @@
-package joshuaradin.gameengine2d.standard.type
+package joshuaradin.gameengine2d.standard.type.geometry
 
 import kotlin.math.*
 
@@ -6,8 +6,12 @@ class Triangle(p1: Point, p2: Point, p3: Point) : Shape(p1, p2 , p3)
 open class Quadrilateral(p1: Point, p2: Point, p3: Point, p4: Point) : Shape(p1, p2, p3, p4) {
     internal constructor(other: Shape) : this(other.points[0], other.points[1], other.points[2], other.points[3])
 }
-open class Parallelogram(center: Point, tops: Double, sides: Double, acuteAngle: Rotation) : Quadrilateral(createParallelogram(center, tops, sides, acuteAngle))
-open class Rectangle(center: Point, tops: Double, sides: Double) : Parallelogram(center, tops, sides, Rotation.createDeg(90.0))
+open class Parallelogram(center: Point, tops: Double, sides: Double, acuteAngle: Rotation) : Quadrilateral(
+    createParallelogram(center, tops, sides, acuteAngle)
+)
+open class Rectangle(center: Point, tops: Double, sides: Double) : Parallelogram(center, tops, sides,
+    Rotation.createDeg(90.0)
+)
 class Square(center: Point, size: Double = 1.0) : Rectangle(center, size, size)
 
 private fun createParallelogram(center: Point, tops: Double, sides: Double, acuteAngle: Rotation) : Shape {
@@ -19,13 +23,20 @@ private fun createParallelogram(center: Point, tops: Double, sides: Double, acut
     val p4 = p3.copy(x = p3.x - tops)
 
     val recentered = Point.recenter(p1, p2, p3, p4)
-    var output: Shape = Quadrilateral(recentered[0], recentered[1], recentered[2], recentered[3])
+    var output: Shape = Quadrilateral(
+        recentered[0],
+        recentered[1],
+        recentered[2],
+        recentered[3]
+    )
     output = output.recenter(Point.ZERO.asVector2())
     return output
 }
 
 class Circle internal constructor(points: List<Point>) : Shape(points) {
-    constructor(center: Point, radius: Double, accuracy: Double = defaultCircleAccuracy) : this(createPointSet(center, radius, accuracy))
+    constructor(center: Point, radius: Double, accuracy: Double = defaultCircleAccuracy) : this(
+        createPointSet(center, radius, accuracy)
+    )
 
     companion object{
         var defaultCircleAccuracy: Double = .999
@@ -52,7 +63,13 @@ fun getAccuracy(significantDigits: Int) : Double{
     val center = Point(0, 0)
     do {
         numPoints *= 2
-        c = Circle(pointFactory(numPoints, center, 1.0))
+        c = Circle(
+            pointFactory(
+                numPoints,
+                center,
+                1.0
+            )
+        )
         createdArea = c.area
 
     } while (!nFirstDigitsSame(significantDigits, actual, createdArea))
@@ -128,6 +145,10 @@ fun main() {
     val b = Circle(Point(0, 0), 10.0, digit6Accuracy)
     println(b)
 
-    val c = Circle(Point(0, 0), 10.0, Circle.maxCircleAccuracy)
+    val c = Circle(
+        Point(0, 0),
+        10.0,
+        Circle.maxCircleAccuracy
+    )
     println(c)
 }

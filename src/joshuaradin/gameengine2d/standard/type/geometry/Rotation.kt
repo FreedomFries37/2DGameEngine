@@ -1,4 +1,4 @@
-package joshuaradin.gameengine2d.standard.type
+package joshuaradin.gameengine2d.standard.type.geometry
 
 import java.io.Serializable
 import kotlin.math.PI
@@ -7,6 +7,7 @@ import kotlin.math.sin
 import kotlin.math.tan
 
 class Rotation(radians: Double = 0.0) : Serializable{
+
 
     private var _radians: Double = radians % (2 * PI)
     var radians: Double
@@ -24,17 +25,22 @@ class Rotation(radians: Double = 0.0) : Serializable{
 
     companion object {
         fun createDeg(deg: Double) = Rotation(deg * PI / 180.0)
+
+        val UP = createDeg(90.0)
+        val DOWN = createDeg(-90.0)
+        val FORWARD = createDeg(0.0)
+        val BACKWARD = createDeg(180.0)
     }
 
-    operator fun plus(other: Rotation) : Rotation{
+    operator fun plus(other: Rotation) : Rotation {
         return Rotation(radians + other.radians)
     }
 
-    operator fun minus(other: Rotation) : Rotation{
+    operator fun minus(other: Rotation) : Rotation {
         return Rotation(radians - other.radians)
     }
 
-    operator fun inc() : Rotation{
+    operator fun inc() : Rotation {
         return Rotation((radians.toDegrees() + 1).toRadians())
     }
 

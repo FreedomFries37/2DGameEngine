@@ -1,10 +1,13 @@
-package joshuaradin.gameengine2d.standard.type
+package joshuaradin.gameengine2d.standard.type.geometry
 
+import joshuaradin.gameengine2d.standard.type.PositionAdjustable
+import joshuaradin.gameengine2d.standard.type.Vector2
 import kotlin.math.PI
 import kotlin.math.atan
 
 
-open class Shape protected constructor(points: List<Point>) : PositionAdjustable<Shape> {
+open class Shape protected constructor(points: List<Point>) :
+    PositionAdjustable<Shape>, IBoundary {
 
     companion object {
         private fun join(p1: Point, p2: Point, p3: Point, rest: Array<out Point>): List<Point>{
@@ -16,7 +19,9 @@ open class Shape protected constructor(points: List<Point>) : PositionAdjustable
 
     }
 
-    constructor(p1: Point, p2: Point, p3: Point, vararg rest: Point) : this(join(p1, p2, p3, rest))
+    constructor(p1: Point, p2: Point, p3: Point, vararg rest: Point) : this(
+        join(p1, p2, p3, rest)
+    )
 
     var points: List<Point>
         protected set
@@ -31,7 +36,7 @@ open class Shape protected constructor(points: List<Point>) : PositionAdjustable
             for (point in points) {
                 output += point
             }
-            output = Point(output.x/numPoints, output.y/numPoints)
+            output = Point(output.x / numPoints, output.y / numPoints)
             return output
         }
 
@@ -80,7 +85,11 @@ open class Shape protected constructor(points: List<Point>) : PositionAdjustable
     }
 
     override infix fun moveAccordingTo(v: Vector2) : Shape {
-        if(v == Vector2(0, 0)) return Shape(points)
+        if(v == Vector2(
+                0,
+                0
+            )
+        ) return Shape(points)
         val list = List(numPoints) { getPoint(it).copy() }
         for (i in 0 until list.size){
             val point = list[i]
@@ -98,11 +107,15 @@ open class Shape protected constructor(points: List<Point>) : PositionAdjustable
     }
 
     override fun recenter(newCenter: Vector2): Shape {
-        return moveAccordingTo(newCenter - center.asVector2())
+        return moveAccordingTo((newCenter - center.asVector2()))
     }
 
     override infix fun scaleTo(v: Vector2) : Shape {
-        if(v == Vector2(1, 1)) return Shape(points)
+        if(v == Vector2(
+                1,
+                1
+            )
+        ) return Shape(points)
         val list = List(numPoints) { getPoint(it).copy() }
         val center = center
         for (i in 0 until list.size){
@@ -114,11 +127,11 @@ open class Shape protected constructor(points: List<Point>) : PositionAdjustable
         return Shape(list)
     }
 
-    fun inBounds(point: Point) : Boolean {
+    override fun inBounds(point: Point) : Boolean {
         return !lines.any { it.pointAbove(point) }
     }
 
-    fun inBounds(shape: Shape) : Boolean {
+    override fun inBounds(shape: Shape) : Boolean {
         val set = HashSet(shape.points)
         for (line in lines) {
             set.removeIf { line.pointAbove(it) }

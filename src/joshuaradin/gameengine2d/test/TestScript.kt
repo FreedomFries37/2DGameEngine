@@ -6,9 +6,13 @@ import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.basic.ObjectBehavior
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
-import joshuaradin.gameengine2d.standard.component.LineRenderer
-import joshuaradin.gameengine2d.standard.component.ShapeRenderer
-import joshuaradin.gameengine2d.standard.type.*
+import joshuaradin.gameengine2d.standard.component.rendering.LineRenderer
+import joshuaradin.gameengine2d.standard.component.rendering.ShapeRenderer
+import joshuaradin.gameengine2d.standard.type.Vector2
+import joshuaradin.gameengine2d.standard.type.geometry.Line
+import joshuaradin.gameengine2d.standard.type.geometry.Point
+import joshuaradin.gameengine2d.standard.type.geometry.Rotation
+import joshuaradin.gameengine2d.standard.type.geometry.Square
 import joshuaradin.gameengine2d.user.connecting.Screen
 import joshuaradin.gameengine2d.user.connecting.Time
 import joshuaradin.gameengine2d.user.input.Input
@@ -27,7 +31,7 @@ class TestScript : ObjectBehavior() {
         val interferenceBoundary = addComponent<InterferenceBoundary>()
         val square = Square(Point.ZERO, 40.0)
 
-        interferenceBoundary?.boundry = square
+        interferenceBoundary?.boundary = square
         val lineRenderer = addComponent<LineRenderer>()
 
         val quadrilateral = square

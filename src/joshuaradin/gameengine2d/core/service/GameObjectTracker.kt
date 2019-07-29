@@ -136,6 +136,12 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         }
     }
 
+    fun fixedUpdate() {
+        for (activeObject in _activeObjects) {
+            activeObject.fixedUpdate()
+        }
+    }
+
     fun getRenderables() : List<Renderer2DComponent> {
         val map = activeObjects.filter { it.hasComponent<Renderer2DComponent>() }
             .map { it.getComponents(Renderer2DComponent::class) }

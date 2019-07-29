@@ -3,24 +3,27 @@ package joshuaradin.gameengine2d.standard.component
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.basic.ObjectBehavior
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
-import joshuaradin.gameengine2d.standard.type.Point
-import joshuaradin.gameengine2d.standard.type.Shape
-import joshuaradin.gameengine2d.standard.type.Square
+import joshuaradin.gameengine2d.standard.type.geometry.*
 import joshuaradin.gameengine2d.user.connecting.Screen
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 
-open class InterferenceBoundary : ObjectBehavior(), MouseListener {
+open class InterferenceBoundary : ObjectBehavior(), MouseListener, IBoundary {
 
     var isTrigger = true
-    var boundry: Shape = Square(Point.ZERO)
+    var boundary: Shape = Square(Point.ZERO)
+    set(value) {
+        field = value
+        lowDefBoundary = LowDefBoundary(boundary)
+    }
+    private var lowDefBoundary = LowDefBoundary(boundary)
 
     private val currentCollided = mutableSetOf<GameObject>()
 
 
 
     override fun start() {
-        boundry += transform!!.position
+        boundary += transform!!.position
         Screen.frame?.mainPanel?.addMouseListener(this)
     }
 
@@ -33,7 +36,7 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
             }
 
             for (collider in GameObjectTracker.instance.colliders().filter { it.gameObject !in currentCollided }) {
-                if(boundry.inBounds(collider.boundry)) {
+                if(inBounds(collider.boundary)) {
                     val element = collider.gameObject!!
                     currentCollided.add(element)
                     element.onBoundaryEnter(this.gameObject!!)
@@ -44,7 +47,7 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
                 var atleastOne = false
                 val connected: GameObject = colliders[0].gameObject!!
                 for (collider: InterferenceBoundary in colliders) {
-                    if(boundry.inBounds(collider.boundry)) {
+                    if(boundary.inBounds(collider.boundary)) {
                         atleastOne = true
                     }
                 }
@@ -55,8 +58,6 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
                     connected.onBoundaryExit(this.gameObject!!)
                 }
             }
-
-        } else {
 
         }
     }
@@ -83,7 +84,7 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
         effectiveGlobalPosition = Point(x + cgX, y + cgY)
 
 
-        if(enabled && boundry.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
+        if(enabled && boundary.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
             gameObject?.onMouseClick()
         }
     }
@@ -105,7 +106,7 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
         effectiveGlobalPosition = Point(x - cgX, y - cgY)
 
 
-        if(enabled && boundry.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
+        if(enabled && boundary.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
             gameObject?.onMouseUp()
         }
     }
@@ -121,8 +122,18 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener {
         effectiveGlobalPosition = Point(x - cgX, y - cgY)
 
 
-        if(enabled && boundry.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
+        if(enabled && boundary.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){
             gameObject?.onMouseDown()
         }
+    }
+
+    override fun inBounds(point: Point): Boolean {
+        if(!lowDefBoundary.inBounds(point)) return false
+        return boundary.inBounds(point)
+    }
+
+    override fun inBounds(shape: Shape): Boolean {
+        if(!lowDefBoundary.inBounds(shape)) return false
+        return boundary.inBounds(shape)
     }
 }

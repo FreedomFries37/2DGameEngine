@@ -10,6 +10,8 @@ abstract class EngineIntractable {
 
     abstract fun update()
 
+    abstract fun fixedUpdate()
+
     abstract fun onBoundaryEnter(other: GameObject)
 
     abstract fun onBoundaryStay(other: GameObject)

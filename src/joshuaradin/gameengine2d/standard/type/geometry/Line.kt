@@ -1,8 +1,11 @@
-package joshuaradin.gameengine2d.standard.type
+package joshuaradin.gameengine2d.standard.type.geometry
 
+import joshuaradin.gameengine2d.standard.type.PositionAdjustable
+import joshuaradin.gameengine2d.standard.type.Vector2
 import java.lang.Math.*
 
-data class Line (var u: Point = Point.ZERO, var v: Point = Point.ZERO) : PositionAdjustable<Line>{
+data class Line (var u: Point = Point.ZERO, var v: Point = Point.ZERO) :
+    PositionAdjustable<Line> {
     val length: Double
         get() = u.distance(v)
 
@@ -19,7 +22,7 @@ data class Line (var u: Point = Point.ZERO, var v: Point = Point.ZERO) : Positio
         }
 
 
-    override operator fun times(n: Double) : Line{
+    override operator fun times(n: Double) : Line {
         val newLength = length*n
         val newXDiff = newLength * cos(angle)
         val newYDiff = newLength * sin(angle)

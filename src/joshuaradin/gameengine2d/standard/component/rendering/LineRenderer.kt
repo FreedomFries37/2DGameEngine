@@ -1,7 +1,9 @@
-package joshuaradin.gameengine2d.standard.component
+package joshuaradin.gameengine2d.standard.component.rendering
 
-import joshuaradin.gameengine2d.standard.type.Line
-import joshuaradin.gameengine2d.standard.type.Point
+import joshuaradin.gameengine2d.standard.component.Camera2D
+import joshuaradin.gameengine2d.standard.component.Transform
+import joshuaradin.gameengine2d.standard.type.geometry.Line
+import joshuaradin.gameengine2d.standard.type.geometry.Point
 import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 import java.awt.BasicStroke
 import java.awt.Color
@@ -10,7 +12,11 @@ import java.awt.image.ImageObserver
 
 class LineRenderer : Renderer2DComponent() {
 
-    var line: Line = Line(Point.ZERO, Point.ZERO)
+    var line: Line =
+        Line(
+            Point.ZERO,
+            Point.ZERO
+        )
     var thickness: Float = 1.0f
     var color: Color = Color.BLACK
 

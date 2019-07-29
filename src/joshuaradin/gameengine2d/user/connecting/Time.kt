@@ -7,6 +7,8 @@ object Time {
     val startTime = System.nanoTime()
 
     var deltaTime: Double = 0.0
+    var fixedDeltaTime: Double = 0.2
+
     val totalTime: Double get() {
         val l = System.nanoTime() - startTime
         return l / 10.0.pow(9)

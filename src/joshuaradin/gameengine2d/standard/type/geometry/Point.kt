@@ -1,13 +1,15 @@
-package joshuaradin.gameengine2d.standard.type
+package joshuaradin.gameengine2d.standard.type.geometry
 
+import joshuaradin.gameengine2d.standard.type.PositionAdjustable
+import joshuaradin.gameengine2d.standard.type.Vector2
 import kotlin.math.pow
 
 
-data class Point(var x: Double, var y: Double) : PositionAdjustable<Point>{
+data class Point(var x: Double, var y: Double) : PositionAdjustable<Point> {
     companion object {
         val ZERO = Point(0.0, 0.0)
 
-        fun centerOf(vararg points: Point) : Point{
+        fun centerOf(vararg points: Point) : Point {
             var output = ZERO
             for (point in points) {
                 output += point
@@ -40,22 +42,25 @@ data class Point(var x: Double, var y: Double) : PositionAdjustable<Point>{
 
     fun displacement() = distance(ZERO)
 
-    fun angle(other: Point) = Line(this, other).angle
+    fun angle(other: Point) = Line(
+        this,
+        other
+    ).angle
 
-    override operator fun plus(o: Vector2) : Point{
+    override operator fun plus(o: Vector2) : Point {
         val output = copy()
         output.x += o.x
         output.y += o.y
         return output
     }
-    operator fun plus(o: Point) : Point{
+    operator fun plus(o: Point) : Point {
         val output = copy()
         output.x += o.x
         output.y += o.y
         return output
     }
 
-    override operator fun minus(o: Vector2) : Point{
+    override operator fun minus(o: Vector2) : Point {
         return this + -o
     }
 
