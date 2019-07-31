@@ -4,6 +4,7 @@ import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.listeners.Event
 import joshuaradin.gameengine2d.core.scene.Scene
 import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
+import joshuaradin.gameengine2d.standard.component.physics.Physics
 import joshuaradin.gameengine2d.user.connecting.Time
 import joshuaradin.gameengine2d.user.output.Renderer2DComponent
 
@@ -57,7 +58,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         }
 
         for (gameObject in objectSet) {
-            gameObject.init()
+            gameObject.awake()
         }
     }
 
@@ -89,7 +90,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         activeSceneToGameObjects[activeScene]?.add(gameObject)
         objectSet.add(gameObject)
         gameObjectToInitalScene[gameObject] = activeScene
-        gameObject.init()
+        gameObject.awake()
         if(gameObject.scene == currentScene) {
             _activeObjects.add(gameObject)
         }
@@ -128,6 +129,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
 
             }
         }
+        printFullInfo()
     }
 
     fun update() {
@@ -137,6 +139,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
     }
 
     fun fixedUpdate() {
+        Physics.updatePhysics()
         for (activeObject in _activeObjects) {
             activeObject.fixedUpdate()
         }

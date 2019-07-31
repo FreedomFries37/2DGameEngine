@@ -64,6 +64,10 @@ data class Point(var x: Double, var y: Double) : PositionAdjustable<Point> {
         return this + -o
     }
 
+    operator fun times(o: Point) : Double {
+        return x*o.x + y*o.y
+    }
+
     fun asVector2() : Vector2 {
         return Vector2(x, y)
     }

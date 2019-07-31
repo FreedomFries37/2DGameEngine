@@ -101,9 +101,20 @@ open class Shape protected constructor(points: List<Point>) :
     }
 
     override infix fun rotate(r: Rotation): Shape {
-        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
-        return Shape(points)
+        if(r == Rotation()) return Shape(points)
+
+        val list = List(numPoints) { Point.ZERO.copy() }
+
+        for (i in 0 until list.size){
+            var line = Line(center, getPoint(i))
+            line = line rotate r
+
+            list[i].x = line.v.x
+            list[i].y = line.v.y
+        }
+
+        return Shape(list)
     }
 
     override fun recenter(newCenter: Vector2): Shape {

@@ -5,6 +5,7 @@ import joshuaradin.gameengine2d.standard.type.Vector
 import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import joshuaradin.gameengine2d.user.connecting.Time
 
+
 class RigidBody2D : InterferenceBoundary() {
 
     var mass: Double = 1.0
@@ -17,6 +18,15 @@ class RigidBody2D : InterferenceBoundary() {
 
 
 
+    private var forces: MutableSet<Pair<Force, Double>> = mutableSetOf()
+
+
+    override fun awake() {
+        if(useGravity) {
+
+        }
+    }
+
     override fun fixedUpdate() {
         velocity += acceleration * Time.fixedDeltaTime
 
@@ -24,7 +34,7 @@ class RigidBody2D : InterferenceBoundary() {
         transform!!.position += velocity.asVector2()
     }
 
-    fun applyForce(force: Vector) {
+    fun applyForce(force: Vector, time: Double) {
 
     }
 }

@@ -5,6 +5,7 @@ import joshuaradin.gameengine2d.core.scene.SceneManager
 import joshuaradin.gameengine2d.core.service.ComponentCloner
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
 import joshuaradin.gameengine2d.standard.component.Transform
+import joshuaradin.gameengine2d.standard.component.physics.PhysicsObject
 import joshuaradin.gameengine2d.standard.type.Vector2
 import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import java.io.Serializable
@@ -99,6 +100,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         children.add(o)
         o._parent?.children?.remove(o)
         o._parent = this
+        PhysicsObject.validatePhysicsObjects()
         return true
     }
 
@@ -185,7 +187,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         }
         created?.scene = parent.scene
         GameObjectTracker.instance.fixAssociatedScene(created)
-        created?.init()
+        created?.awake()
         if(started){
             created?.started = true
             created?.start()
@@ -213,7 +215,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         if(components.contains(component)) return null
         components.add(component)
         component.gameObject = this
-        component.init()
+        component.awake()
         if(started){
             component.start()
         }
@@ -237,6 +239,34 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
 
     inline fun <reified T : Component> getComponents() : Set<T>{
         return getComponents(T::class)
+    }
+
+    inline fun <reified T : Component> findParentWithComponent(findHighest: Boolean = true) : GameObject? {
+        return findParentWithComponent(T::class, findHighest)
+    }
+
+    /**
+     * Finds the parent with a component
+     *
+     * @param type the component being looked for
+     * @param findHighest if true, finds the highest level parent with the component, else it finds the first
+     *
+     * @return returns the [GameObject] with the component, returns null if there is none
+     */
+    fun <T : Component> findParentWithComponent(type: KClass<out T>, findHighest: Boolean = true) : GameObject? {
+        var goPtr: GameObject? = parent
+        var output: GameObject? = null
+        while (goPtr != null) {
+            if(goPtr.hasComponent(type)) {
+                if(findHighest) {
+                    output = goPtr
+                }else return goPtr
+            }
+
+            goPtr = goPtr.parent
+        }
+
+        return output
     }
 
     fun getAllComponents() : Set<ObjectBehavior>{
@@ -289,9 +319,9 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
 
 
 
-    override fun init(){
+    override fun awake(){
         for (component in components.filter { it.enabled }) {
-            component.init()
+            component.awake()
         }
     }
 
@@ -299,6 +329,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         for (component in  components.filter { it.enabled }) {
             component.start()
         }
+
     }
 
     override fun update() {
@@ -316,6 +347,12 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
     override fun onBoundaryStay(other: GameObject){
         for (component in  components.filter { it.enabled }) {
             component.onBoundaryStay(other)
+        }
+    }
+
+    override fun fixedUpdate() {
+        for (component in  components.filter { it.enabled }) {
+            component.fixedUpdate()
         }
     }
 

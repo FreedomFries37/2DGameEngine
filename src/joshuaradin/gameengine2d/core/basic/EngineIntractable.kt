@@ -4,7 +4,7 @@ abstract class EngineIntractable {
     var enabled: Boolean = true
 
 
-    abstract fun init()
+    abstract fun awake()
 
     abstract fun start()
 

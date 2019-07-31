@@ -15,11 +15,11 @@ class Camera2D : ObjectBehavior(){
     /**
      * The amount of pixels per unit in the x direction at a (1, 1) scale
      */
-    var unitsPerPixelWidth: Double = 1.0 / 20
+    var unitsPerPixelWidth: Double = 1.0 / 1
     /**
      * The amount of pixels per unit in the y direction at a (1, 1) scale
      */
-    var unitsPerPixelHieght: Double = 1.0 / 20
+    var unitsPerPixelHieght: Double = 1.0 / 1
 
     /**
      * The scale of the camera. The closer the value approaches zero, the further zoomed in it would appear
@@ -69,11 +69,16 @@ class Camera2D : ObjectBehavior(){
 
 
 
+
     override fun start() {
         //addComponent<FrameRateLimiter>()
         val shapeR = addComponent<ShapeRenderer>()
         shapeR?.borderColor = Color.RED
         shapeR?.shape = Square(Point.ZERO)
 
+    }
+
+    override fun toString(): String {
+        return "Zoom = $scale"
     }
 }

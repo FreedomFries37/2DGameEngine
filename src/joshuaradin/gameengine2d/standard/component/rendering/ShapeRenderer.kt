@@ -18,11 +18,12 @@ class ShapeRenderer : Renderer2DComponent() {
 
     var shape: Shape? = null
 
-    var fillColor: Color = Color.WHITE
+    var fillColor: Color = Color(0,0,0)
     var borderWidth: Float = 10f
     var borderColor: Color = Color.GRAY
 
     override fun render(g: Graphics2D, transform: Transform, camera2D: Camera2D, observer: ImageObserver) {
+
         if(shape != null) {
             g.stroke = BasicStroke(borderWidth*transform.scale.displacement().toFloat())
 
@@ -65,6 +66,6 @@ class ShapeRenderer : Renderer2DComponent() {
     }
 
     override fun toString(): String {
-        return "$shape at ${shape?.center}"
+        return "$shape at ${shape?.center} fill = $fillColor"
     }
 }

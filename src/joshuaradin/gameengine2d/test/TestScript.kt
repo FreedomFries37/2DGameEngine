@@ -13,9 +13,9 @@ import joshuaradin.gameengine2d.standard.type.geometry.Line
 import joshuaradin.gameengine2d.standard.type.geometry.Point
 import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import joshuaradin.gameengine2d.standard.type.geometry.Square
-import joshuaradin.gameengine2d.user.connecting.Screen
 import joshuaradin.gameengine2d.user.connecting.Time
 import joshuaradin.gameengine2d.user.input.Input
+import java.awt.Color
 
 class TestScript : ObjectBehavior() {
 
@@ -47,11 +47,12 @@ class TestScript : ObjectBehavior() {
 
         val center = gameObject?.instantiate(Center.gameObject)
         center?.removeParent()
-        transform?.position = Vector2(10, 10)
-        Screen.camera()?.transform?.rotation= Rotation.createDeg(45.0)
+        transform?.position = Vector2(-10, 10)
+
     }
 
     override fun update() {
+
 
         if(shrink){
             val vector2 = Vector2(.1, .1) * 10.0 * Time.deltaTime
@@ -66,6 +67,8 @@ class TestScript : ObjectBehavior() {
         }else if(!shrink && transform!!.scale.x >= 1){
             shrink = true
         }
+
+
 
         transform!!.rotation += Rotation.createDeg(15.0 * Time.deltaTime)
 
@@ -89,7 +92,7 @@ class TestScript : ObjectBehavior() {
         }
 
         if (Input.getKey(KeyCode.UP)) {
-            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(-90.0))* Time.deltaTime
+            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(90.0))* Time.deltaTime
         }
 
         if (Input.getKey(KeyCode.LEFT)) {
@@ -97,15 +100,34 @@ class TestScript : ObjectBehavior() {
 
         }
         if (Input.getKey(KeyCode.DOWN)) {
-            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(90.0))* Time.deltaTime
+            transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(-90.0))* Time.deltaTime
 
         }
         if (Input.getKey(KeyCode.RIGHT)) {
             transform!!.position += Vector2.distanceWithRot(power, Rotation.createDeg(0.0))* Time.deltaTime
 
         }
+        if (Input.getKey(KeyCode.Q)) {
+            transform!!.rotation += Rotation.COUNTERCLOCKWISE * Time.deltaTime
+        }
 
-        line!!.u = transform!!.position.toPoint()
+        if (Input.getKey(KeyCode.E)) {
+            transform!!.rotation += Rotation.CLOCKWISE * Time.deltaTime
+
+        }
+
+        if(shapeRenderer!!.fillColor.red < 255) {
+            shapeRenderer!!.fillColor += Color(5 , 0, 0) * Time.deltaTime
+        }else if(shapeRenderer!!.fillColor.green < 255) {
+            shapeRenderer!!.fillColor += Color(0, 5, 0) * Time.deltaTime
+        } else if(shapeRenderer!!.fillColor.blue < 255) {
+            shapeRenderer!!.fillColor += Color(0, 0, 5) * Time.deltaTime
+        }else{
+            shapeRenderer!!.fillColor = Color(0,0,0)
+        }
+
+
+        //line!!.u = transform!!.position.toPoint()
 
         if (Input.getKeyDown(KeyCode.F)) {
             GameObjectTracker.instance.printAllObjectSceneAndPosition()
@@ -114,17 +136,24 @@ class TestScript : ObjectBehavior() {
             GameObjectTracker.instance.printFullInfo()
         }
 
-        if(cameraObject != null && line != null){
-            //gameObject?.transform?.position = line!!.v.asVector2()
-            //cameraObject!!.transform.position = line!!.v.asVector2()
-            shapeRenderer!!.shape = shapeRenderer!!.shape?.recenter( line!!.u.asVector2())
-            //shapeRenderer!!.shape?.printInfo()
-        }
-
 
     }
 
     override fun onMouseClick() {
         println("Yahaha you found me")
     }
+}
+
+operator fun Color.plus(other: Color) : Color {
+    val nRed = if(red + other.red > 255) 255 else red + other.red
+    val nGreen = if(green + other.green > 255) 255 else green + other.green
+    val nBlue = if(blue + other.blue > 255) 255 else blue + other.blue
+    
+    return Color(nRed, nGreen, nBlue)
+}
+operator fun Color.times(d: Double) : Color {
+    return this * d.toFloat()
+}
+operator fun Color.times(d: Float) : Color {
+    return Color((red * d) % 256, (green  * d) % 256, (blue *d) % 256)
 }

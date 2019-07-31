@@ -81,7 +81,7 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener, IBoundary {
         val (x, y) = e?.point!!.to2DPoint() - Screen.center().asVector2()
         val effectiveGlobalPosition: Point
         val (cgX, cgY) = Screen.camera()?.gameObject!!.getGlobalPosition()
-        effectiveGlobalPosition = Point(x + cgX, y + cgY)
+        effectiveGlobalPosition = Point(x + cgX, -y + cgY)
 
 
         if(enabled && boundary.inBounds(effectiveGlobalPosition - gameObject!!.getGlobalPosition())){

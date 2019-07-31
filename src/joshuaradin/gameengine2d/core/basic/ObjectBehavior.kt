@@ -41,7 +41,7 @@ abstract class ObjectBehavior : Component(), IMouseListener {
 
     }
 
-    override fun init() {
+    override fun awake() {
 
     }
 

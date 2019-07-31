@@ -39,6 +39,10 @@ open class Vector(val displacement: Double, val angle: Rotation = Rotation()) : 
         return Vector(displacement * other, angle)
     }
 
+    operator fun div(other: Double) : Vector {
+        return Vector(displacement / other, angle)
+    }
+
 
     operator fun component1() : Double {
         return asVector2().x

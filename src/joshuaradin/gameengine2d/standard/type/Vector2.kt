@@ -37,7 +37,7 @@ data class Vector2 (var x: Double, var y: Double) :  Serializable{
     }
 
     operator fun minus(other: Int) : Vector2{
-        return Vector2(x + other, y + other)
+        return Vector2(x - other, y - other)
     }
 
     operator fun minus(other: Double) : Vector2 {
@@ -45,7 +45,7 @@ data class Vector2 (var x: Double, var y: Double) :  Serializable{
     }
 
     operator fun minus(other: Vector2) : Vector2{
-        return Vector2(x + other.x, y + other.y)
+        return Vector2(x - other.x, y - other.y)
     }
 
 
@@ -59,6 +59,10 @@ data class Vector2 (var x: Double, var y: Double) :  Serializable{
 
     operator fun times(other: Double) : Vector2{
         return Vector2(x * other, y * other)
+    }
+
+    infix fun dot(other: Vector2) : Double {
+        return x * other.x + y * other.y
     }
 
 
@@ -82,7 +86,7 @@ data class Vector2 (var x: Double, var y: Double) :  Serializable{
         } else {
             Rotation.createDeg(0.0)
         }
-        return Rotation(atan((y - other.y) / d))
+        return Rotation(atan((y - other.y) / d) + if (x < other.x) PI else 0.0)
     }
 
     infix fun rotate(rot: Rotation) : Vector2 {

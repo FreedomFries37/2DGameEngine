@@ -30,6 +30,9 @@ class Rotation(radians: Double = 0.0) : Serializable{
         val DOWN = createDeg(-90.0)
         val FORWARD = createDeg(0.0)
         val BACKWARD = createDeg(180.0)
+
+        val CLOCKWISE = UP
+        val COUNTERCLOCKWISE = DOWN
     }
 
     operator fun plus(other: Rotation) : Rotation {
@@ -40,9 +43,19 @@ class Rotation(radians: Double = 0.0) : Serializable{
         return Rotation(radians - other.radians)
     }
 
+    operator fun times(other: Double) : Rotation {
+        return Rotation(radians * other)
+    }
+
+    operator fun div(other: Double) : Rotation {
+        return Rotation(radians / other)
+    }
+
     operator fun inc() : Rotation {
         return Rotation((radians.toDegrees() + 1).toRadians())
     }
+
+
 
     /**
      * Converts degrees to radians
@@ -78,5 +91,18 @@ class Rotation(radians: Double = 0.0) : Serializable{
 
     override fun toString(): String {
         return "$degrees*"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Rotation) return false
+
+        if (_radians != other._radians) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return _radians.hashCode()
     }
 }

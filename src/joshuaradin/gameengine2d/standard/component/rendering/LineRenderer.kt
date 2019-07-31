@@ -25,9 +25,9 @@ class LineRenderer : Renderer2DComponent() {
         g.color = color
         g.stroke = BasicStroke(thickness)
 
-        val distanceFromCamera = getDistanceFromCamera(transform, camera2D)
+        val distanceFromCamera = camera2D.getPointOnScreen(transform.gameObject!!)
         var lineAdj = line.copy()
-        lineAdj += distanceFromCamera
+        lineAdj =lineAdj relativeTo distanceFromCamera
 
         g.drawLine(lineAdj.u.x.toInt(), lineAdj.u.y.toInt(), lineAdj.v.x.toInt(), lineAdj.v.y.toInt())
     }
