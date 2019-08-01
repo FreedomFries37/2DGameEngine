@@ -1,9 +1,9 @@
 package joshuaradin.gameengine2d.test
 
-import joshuaradin.gameengine2d.core.basic.GameObject
-import joshuaradin.gameengine2d.standard.component.rendering.LineRenderer
-import joshuaradin.gameengine2d.standard.type.geometry.Line
-import joshuaradin.gameengine2d.standard.type.geometry.Point
+import joshuaradin.gameengine2d.engine.core.basic.GameObject
+import joshuaradin.gameengine2d.engine.standard.component.rendering.LineRenderer
+import joshuaradin.gameengine2d.engine.standard.type.geometry.Line
+import joshuaradin.gameengine2d.engine.standard.type.geometry.Point
 
 object Center {
     val gameObject = GameObject.createEmpty(null)

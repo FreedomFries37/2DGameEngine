@@ -2,18 +2,18 @@ package joshuaradin.gameengine2d.test
 
 
 import javafx.scene.input.KeyCode
-import joshuaradin.gameengine2d.core.basic.GameObject
-import joshuaradin.gameengine2d.core.basic.ObjectBehavior
-import joshuaradin.gameengine2d.core.service.GameObjectTracker
-import joshuaradin.gameengine2d.standard.component.Camera2D
-import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
-import joshuaradin.gameengine2d.standard.component.rendering.LineRenderer
-import joshuaradin.gameengine2d.standard.component.rendering.ShapeRenderer
-import joshuaradin.gameengine2d.standard.type.Vector2
-import joshuaradin.gameengine2d.standard.type.geometry.Line
-import joshuaradin.gameengine2d.standard.type.geometry.Point
-import joshuaradin.gameengine2d.standard.type.geometry.Rotation
-import joshuaradin.gameengine2d.standard.type.geometry.Square
+import joshuaradin.gameengine2d.engine.core.basic.GameObject
+import joshuaradin.gameengine2d.engine.core.basic.ObjectBehavior
+import joshuaradin.gameengine2d.engine.core.service.GameObjectTracker
+import joshuaradin.gameengine2d.engine.standard.component.Camera2D
+import joshuaradin.gameengine2d.engine.standard.component.InterferenceBoundary
+import joshuaradin.gameengine2d.engine.standard.component.rendering.LineRenderer
+import joshuaradin.gameengine2d.engine.standard.component.rendering.ShapeRenderer
+import joshuaradin.gameengine2d.engine.standard.type.Vector2
+import joshuaradin.gameengine2d.engine.standard.type.geometry.Line
+import joshuaradin.gameengine2d.engine.standard.type.geometry.Point
+import joshuaradin.gameengine2d.engine.standard.type.geometry.Rotation
+import joshuaradin.gameengine2d.engine.standard.type.geometry.Square
 import joshuaradin.gameengine2d.user.connecting.Time
 import joshuaradin.gameengine2d.user.input.Input
 import java.awt.Color

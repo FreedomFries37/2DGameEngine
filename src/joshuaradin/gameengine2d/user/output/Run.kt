@@ -1,8 +1,8 @@
 package joshuaradin.gameengine2d.user.output
 
-import joshuaradin.gameengine2d.core.ProjectInfo
-import joshuaradin.gameengine2d.core.scene.SceneManager
-import joshuaradin.gameengine2d.standard.component.Camera2D
+import joshuaradin.gameengine2d.engine.core.ProjectInfo
+import joshuaradin.gameengine2d.engine.core.scene.SceneManager
+import joshuaradin.gameengine2d.engine.standard.component.Camera2D
 import joshuaradin.gameengine2d.test.PhysicsScript
 import joshuaradin.gameengine2d.test.TestScript
 import joshuaradin.gameengine2d.user.connecting.Time

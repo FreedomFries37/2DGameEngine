@@ -1,8 +1,8 @@
 package joshuaradin.gameengine2d.user.output
 
-import joshuaradin.gameengine2d.core.service.GameObjectTracker
-import joshuaradin.gameengine2d.standard.component.Camera2D
-import joshuaradin.gameengine2d.standard.component.Transform
+import joshuaradin.gameengine2d.engine.core.service.GameObjectTracker
+import joshuaradin.gameengine2d.engine.standard.component.Camera2D
+import joshuaradin.gameengine2d.engine.standard.component.Transform
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.JPanel
