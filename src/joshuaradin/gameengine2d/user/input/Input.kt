@@ -3,11 +3,15 @@ package joshuaradin.gameengine2d.user.input
 import javafx.scene.input.KeyCode
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
+import java.awt.event.MouseWheelEvent
+import java.awt.event.MouseWheelListener
 import javax.swing.JFrame
+
+
 
 object Input {
 
-    private object Listener : KeyListener {
+    private object Listener : KeyListener, MouseWheelListener {
         /**
          * Invoked when a key has been typed.
          * See the class description for [KeyEvent] for a definition of
@@ -43,11 +47,45 @@ object Input {
                 keysChecked.remove(e.keyCode)
             }
         }
+
+        /**
+         * Invoked when the mouse wheel is rotated.
+         * @param e the event to be processed
+         * @see MouseWheelEvent
+         */
+        override fun mouseWheelMoved(e: MouseWheelEvent?) {
+            var newline = "\n"
+            var message: String
+            val notches = e!!.wheelRotation
+            wheelCheck -= notches
+            if (notches < 0) {
+                message = ("Mouse wheel moved UP "
+                        + -notches + " notch(es)" + newline)
+            } else {
+                message = ("Mouse wheel moved DOWN "
+                        + notches + " notch(es)" + newline)
+            }
+            if (e.scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+                message += "    Scroll type: WHEEL_UNIT_SCROLL$newline"
+                message += ("    Scroll amount: " + e.scrollAmount
+                        + " unit increments per notch" + newline)
+                message += ("    Units to scroll: " + e.unitsToScroll
+                        + " unit increments" + newline)
+            } else { //scroll type == MouseWheelEvent.WHEEL_BLOCK_SCROLL
+                message += "    Scroll type: WHEEL_BLOCK_SCROLL$newline"
+            }
+            println(message)
+        }
     }
+
+
+
 
 
     private val keysPressed = mutableSetOf<Int>()
     private val keysChecked = mutableMapOf<Int, Boolean>()
+    private var wheelCheck = 0
+
 
     /**
      * returns true while a key is being held
@@ -80,8 +118,28 @@ object Input {
         return getKeyDown(keycode.code)
     }
 
+    /**
+     * Every check for wheelup removes an instance
+     */
+    fun getWheelUp() : Boolean {
+        if(wheelCheck > 0) {
+            wheelCheck--
+            return true
+        }
+        return false
+    }
+
+    fun getWheelDown() : Boolean {
+        if(wheelCheck < 0) {
+            wheelCheck++
+            return true
+        }
+        return false
+    }
+
     fun attachTo(o: JFrame) {
         o.addKeyListener(Listener)
+        o.addMouseWheelListener(Listener)
     }
 
 }

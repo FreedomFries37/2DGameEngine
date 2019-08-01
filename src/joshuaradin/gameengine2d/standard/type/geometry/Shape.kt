@@ -138,6 +138,14 @@ open class Shape protected constructor(points: List<Point>) :
         return Shape(list)
     }
 
+    override infix fun transform(function: (Point) -> Point) : Shape {
+        val list = MutableList(numPoints) { getPoint(it).copy() }
+        for (i in 0 until list.size){
+            list[i] = function(list[i])
+        }
+        return Shape(list)
+    }
+
     override fun inBounds(point: Point) : Boolean {
         return !lines.any { it.pointAbove(point) }
     }

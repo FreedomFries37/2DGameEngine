@@ -149,8 +149,9 @@ data class Line (var u: Point = Point.ZERO, var v: Point = Point.ZERO) :
         return Rotation(angle)
     }
 
-
-
+    override fun transform(function: (Point) -> Point): Line {
+        return copy(u = function(u.copy()), v = function(v.copy()))
+    }
 }
 
 fun main() {

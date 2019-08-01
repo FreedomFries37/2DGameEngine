@@ -5,6 +5,7 @@ import javafx.scene.input.KeyCode
 import joshuaradin.gameengine2d.core.basic.GameObject
 import joshuaradin.gameengine2d.core.basic.ObjectBehavior
 import joshuaradin.gameengine2d.core.service.GameObjectTracker
+import joshuaradin.gameengine2d.standard.component.Camera2D
 import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
 import joshuaradin.gameengine2d.standard.component.rendering.LineRenderer
 import joshuaradin.gameengine2d.standard.component.rendering.ShapeRenderer
@@ -29,7 +30,7 @@ class TestScript : ObjectBehavior() {
     override fun start() {
         shapeRenderer = addComponent()
         val interferenceBoundary = addComponent<InterferenceBoundary>()
-        val square = Square(Point.ZERO, 40.0)
+        val square = Square(Point.ZERO, 10.0)
 
         interferenceBoundary?.boundary = square
         val lineRenderer = addComponent<LineRenderer>()
@@ -69,6 +70,11 @@ class TestScript : ObjectBehavior() {
         }
 
 
+        if(Input.getWheelUp()) {
+            cameraObject?.getComponent<Camera2D>()?.zoomOut(1.1)
+        }else if (Input.getWheelDown()) {
+            cameraObject?.getComponent<Camera2D>()?.zoomIn(1.1)
+        }
 
         transform!!.rotation += Rotation.createDeg(15.0 * Time.deltaTime)
 
@@ -116,16 +122,6 @@ class TestScript : ObjectBehavior() {
 
         }
 
-        if(shapeRenderer!!.fillColor.red < 255) {
-            shapeRenderer!!.fillColor += Color(5 , 0, 0) * Time.deltaTime
-        }else if(shapeRenderer!!.fillColor.green < 255) {
-            shapeRenderer!!.fillColor += Color(0, 5, 0) * Time.deltaTime
-        } else if(shapeRenderer!!.fillColor.blue < 255) {
-            shapeRenderer!!.fillColor += Color(0, 0, 5) * Time.deltaTime
-        }else{
-            shapeRenderer!!.fillColor = Color(0,0,0)
-        }
-
 
         //line!!.u = transform!!.position.toPoint()
 
@@ -133,6 +129,9 @@ class TestScript : ObjectBehavior() {
             GameObjectTracker.instance.printAllObjectSceneAndPosition()
         }
         if (Input.getKeyDown(KeyCode.G)) {
+            GameObjectTracker.instance.printLayeredToStringInfo()
+        }
+        if (Input.getKeyDown(KeyCode.H)) {
             GameObjectTracker.instance.printFullInfo()
         }
 
@@ -155,5 +154,5 @@ operator fun Color.times(d: Double) : Color {
     return this * d.toFloat()
 }
 operator fun Color.times(d: Float) : Color {
-    return Color((red * d) % 256, (green  * d) % 256, (blue *d) % 256)
+    return Color((red * d).toInt() % 256, (green  * d).toInt()  % 256, (blue *d).toInt()  % 256)
 }

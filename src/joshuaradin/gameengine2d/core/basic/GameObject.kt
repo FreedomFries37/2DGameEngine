@@ -25,6 +25,7 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
             _name = scene.createQualifiedName(value)
         }
     var started: Boolean = false
+
     val parent: GameObject?
         get() = _parent
     private var _scene = scene
@@ -37,14 +38,11 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
         }
 
     companion object {
-        fun createEmpty(parent: GameObject?) : GameObject {
+        fun createEmpty(parent: GameObject?, scene: Scene = parent?.scene ?: SceneManager.stagingScene) : GameObject {
 
-            val name: String = if(parent == null) "Base" else "Empty"
+            val name: String = if(parent == null && !scene.initialized) "Base" else "Empty"
 
-            return if (parent != null) {
-                val initialScene = parent.scene
-                GameObject(initialScene, parent, listOf(), name)
-            } else GameObject(SceneManager.stagingScene, parent, listOf(), name)
+            return GameObject(scene, parent, listOf(), name)
         }
 
         private inline fun <reified T : Component> loopInternal(created: GameObject, component: T) {
@@ -185,9 +183,10 @@ class GameObject(scene: Scene, private var _parent: GameObject?, children: List<
             o?.setParent(parent)
             o
         }
+        created?.name = parent.scene.createQualifiedName(other.name + " copy")
         created?.scene = parent.scene
         GameObjectTracker.instance.fixAssociatedScene(created)
-        created?.awake()
+        // created?.awake()
         if(started){
             created?.started = true
             created?.start()

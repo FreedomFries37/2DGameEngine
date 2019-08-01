@@ -7,8 +7,11 @@ import joshuaradin.gameengine2d.user.input.Input
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import javax.swing.JFrame
 import javax.swing.JLayeredPane
+
 
 class GameWindow(name: String, dimension: Dimension, gameObjectTracker: GameObjectTracker = GameObjectTracker.initialize()) : JFrame(name) {
 
@@ -38,9 +41,15 @@ class GameWindow(name: String, dimension: Dimension, gameObjectTracker: GameObje
         contentPane.layout = BorderLayout()
 
 
-
-
         mainPanel = RenderPanel()
+        this.getRootPane().addComponentListener(object : ComponentAdapter() {
+            override fun componentResized(e: ComponentEvent?) {
+                // This is only called when the user releases the mouse button.
+                Screen(mainPanel.width, mainPanel.height, this@GameWindow)
+            }
+        })
+
+
 
         this.gameObjectTracker = gameObjectTracker
         //mainPanel.isDoubleBuffered = true
@@ -48,7 +57,6 @@ class GameWindow(name: String, dimension: Dimension, gameObjectTracker: GameObje
         //layeredPane.addO(guiPanel, 1)
         //add(layeredPane)
 
-        isResizable = false
 
 
         pack()

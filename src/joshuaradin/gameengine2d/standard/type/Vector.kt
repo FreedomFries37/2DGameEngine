@@ -6,6 +6,8 @@ import java.io.Serializable
 
 open class Vector(val displacement: Double, val angle: Rotation = Rotation()) : Serializable {
 
+    constructor(vector2: Vector2) : this(vector2.displacement(), vector2.angle())
+
     fun asVector2() : Vector2 {
         return Vector2.distanceWithRot(displacement, angle)
     }
@@ -19,7 +21,7 @@ open class Vector(val displacement: Double, val angle: Rotation = Rotation()) : 
     }
 
     operator fun plus(other: Vector) : Vector {
-        return this + other.displacement + other.angle
+        return Vector(this.asVector2() + other.asVector2())
     }
 
 
@@ -52,6 +54,9 @@ open class Vector(val displacement: Double, val angle: Rotation = Rotation()) : 
         return asVector2().y
     }
 
+    override fun toString(): String {
+        return asVector2().toString()
+    }
 }
 
 @Deprecated("Unneeded", replaceWith = ReplaceWith("Nothing"))

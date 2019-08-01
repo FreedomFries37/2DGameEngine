@@ -1,5 +1,6 @@
 package joshuaradin.gameengine2d.standard.type
 
+import joshuaradin.gameengine2d.standard.type.geometry.Point
 import joshuaradin.gameengine2d.standard.type.geometry.Rotation
 import java.io.Serializable
 
@@ -9,6 +10,7 @@ interface PositionAdjustable<T> : Serializable{
     infix fun scaleTo(v: Vector2) : T
     infix fun rotate(r: Rotation) : T
     infix fun recenter(newCenter: Vector2): T
+    infix fun transform(function: (Point) -> (Point)) : T
 
     operator fun plus (v: Vector2) : T {
         return this moveAccordingTo v

@@ -136,4 +136,8 @@ open class InterferenceBoundary : ObjectBehavior(), MouseListener, IBoundary {
         if(!lowDefBoundary.inBounds(shape)) return false
         return boundary.inBounds(shape)
     }
+
+    override fun toString(): String {
+        return "Inbound Objects = $currentCollided"
+    }
 }

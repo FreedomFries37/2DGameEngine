@@ -35,7 +35,7 @@ class Scene (val name: String = "scene" + (++numScenes)) : Serializable{
     }
 
     fun initialize() {
-        baseObject = GameObject.createEmpty(null)
+        baseObject = GameObject.createEmpty(null, this)
         baseObject?.scene = this
         GameObjectTracker.instance.fixAssociatedScene(baseObject)
         initialized = true
@@ -63,7 +63,7 @@ class Scene (val name: String = "scene" + (++numScenes)) : Serializable{
         return name + (lastCreated(name)?.plus(1) ?: 1)
     }
 
-    private fun nameExists(name: String) : Boolean{
+    fun nameExists(name: String) : Boolean{
         return objectsInScene().any {it.name == name}
     }
 

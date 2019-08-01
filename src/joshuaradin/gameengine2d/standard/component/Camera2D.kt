@@ -15,11 +15,11 @@ class Camera2D : ObjectBehavior(){
     /**
      * The amount of pixels per unit in the x direction at a (1, 1) scale
      */
-    var unitsPerPixelWidth: Double = 1.0 / 1
+    var pixelsPerUnitWidth: Double = 20.0
     /**
      * The amount of pixels per unit in the y direction at a (1, 1) scale
      */
-    var unitsPerPixelHieght: Double = 1.0 / 1
+    var pixelsPerUnitHeight: Double = 20.0
 
     /**
      * The scale of the camera. The closer the value approaches zero, the further zoomed in it would appear
@@ -30,15 +30,15 @@ class Camera2D : ObjectBehavior(){
             field = value
         }
 
-    fun zoomOut(mult: Double) {
+    fun zoomIn(mult: Double) {
         if(mult < 0) throw IllegalArgumentException()
         scale.x *= mult
         scale.y *= mult
     }
 
-    fun zoomIn(mult: Double) {
+    fun zoomOut(mult: Double) {
         if(mult < 0) throw IllegalArgumentException()
-        zoomOut(1.0 / mult)
+        zoomIn(1.0 / mult)
     }
 
     /**
@@ -50,30 +50,35 @@ class Camera2D : ObjectBehavior(){
      * @return the point where the object would be on the screen
      */
     fun getPointOnScreen(o: GameObject, displacement: Point = Point.ZERO) : Point {
-        val globalPosition = o.getGlobalPosition() + displacement.asVector2()
-        val cameraPosition = gameObject!!.getGlobalPosition()
-
-        val (xActualDist, yActualDist) = globalPosition - cameraPosition
-        val xAngled = transform!!.rotation.cos() * xActualDist + transform!!.rotation.sin() * yActualDist
-        val yAngled = transform!!.rotation.sin() * xActualDist + transform!!.rotation.cos() * yActualDist
-
-        val xScaled = xAngled * scale.x
-        val yScaled = yAngled * scale.y
-
-        val xPixels = xScaled * unitsPerPixelWidth
-        val yPixels = yScaled * unitsPerPixelHieght
-
-        val output = Screen.center().asVector2() + Vector2(xPixels, -yPixels)
-        return output.toPoint()
+        return getPointTransformation(o, displacement)(Point.ZERO)
     }
 
+    fun getPointTransformation(o: GameObject, displacement: Point = Point.ZERO) : (Point) -> Point {
+        return {
+            val globalPosition = o.getGlobalPosition() + displacement.asVector2() + it.asVector2()
+            val cameraPosition = gameObject!!.getGlobalPosition()
+
+            val (xActualDist, yActualDist) = globalPosition - cameraPosition
+            val xAngled = transform!!.rotation.cos() * xActualDist + transform!!.rotation.sin() * yActualDist
+            val yAngled = transform!!.rotation.sin() * xActualDist + transform!!.rotation.cos() * yActualDist
+
+            val xScaled = xAngled * scale.x
+            val yScaled = yAngled * scale.y
+
+            val xPixels = xScaled * pixelsPerUnitWidth
+            val yPixels = yScaled * pixelsPerUnitHeight
+
+            val output = Screen.center().asVector2() + Vector2(xPixels, -yPixels)
+            output.toPoint()
+        }
+    }
 
 
 
     override fun start() {
         //addComponent<FrameRateLimiter>()
         val shapeR = addComponent<ShapeRenderer>()
-        shapeR?.borderColor = Color.RED
+        shapeR?.fillColor = Color.RED
         shapeR?.shape = Square(Point.ZERO)
 
     }

@@ -18,8 +18,9 @@ class ShapeRenderer : Renderer2DComponent() {
 
     var shape: Shape? = null
 
+
     var fillColor: Color = Color(0,0,0)
-    var borderWidth: Float = 10f
+    var borderWidth: Float = 1f
     var borderColor: Color = Color.GRAY
 
     override fun render(g: Graphics2D, transform: Transform, camera2D: Camera2D, observer: ImageObserver) {
@@ -36,11 +37,13 @@ class ShapeRenderer : Renderer2DComponent() {
             var adjustedShape = shape!!
             adjustedShape *= transform.scale
 
-            val distanceFromCamera = getDistanceFromCamera(transform, camera2D)
-            adjustedShape += pointOnScreen.asVector2()
+            //adjustedShape += pointOnScreen.asVector2()
+
 
             val rotDiff = transform.rotation - camera2D.transform!!.rotation
             adjustedShape = adjustedShape rotate rotDiff
+
+            adjustedShape = adjustedShape transform camera2D.getPointTransformation(transform.gameObject!!)
 
 
             val shapeAsPolygon = adjustedShape.toPolygon()

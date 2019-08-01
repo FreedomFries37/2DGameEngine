@@ -41,9 +41,10 @@ internal class PhysicsObject private constructor(val gameObject: GameObject)  {
                     objectMap[gameObject]?.involved?.remove(gameObject)
                 }
 
-
-                objectMap[gameObject] = physicsObject
-                physicsObject.involved.add(gameObject)
+                if(!objectMap.containsKey(gameObject)) {
+                    objectMap[gameObject] = physicsObject
+                    physicsObject.involved.add(gameObject)
+                }
                 return physicsObject
             }
 
@@ -68,8 +69,8 @@ internal class PhysicsObject private constructor(val gameObject: GameObject)  {
          * @return the upper most parent [GameObject] with a [RigidBody2D]
          */
         private fun GameObject.lastInChain() : GameObject? {
-            var output: GameObject? = parent
-            if(output == null || output.hasComponent<RigidBody2D>()) return output
+            var output: GameObject? = this
+            if(output == null || !output.hasComponent<RigidBody2D>()) return null
             while (output!!.parent != null && output.parent!!.hasComponent<RigidBody2D>()) {
                 output = output.parent
             }
@@ -83,6 +84,8 @@ internal class PhysicsObject private constructor(val gameObject: GameObject)  {
     private val GameObject.mass: Double get() {
         return getComponent<RigidBody2D>()!!.mass
     }
+
+
 
     private val involved: MutableList<GameObject> = mutableListOf(gameObject)
     private val mass: Double get() {

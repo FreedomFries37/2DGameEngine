@@ -1,6 +1,7 @@
 package joshuaradin.gameengine2d.core.service
 
 import joshuaradin.gameengine2d.core.basic.GameObject
+import joshuaradin.gameengine2d.core.basic.GameObjectInfo
 import joshuaradin.gameengine2d.core.listeners.Event
 import joshuaradin.gameengine2d.core.scene.Scene
 import joshuaradin.gameengine2d.standard.component.InterferenceBoundary
@@ -37,7 +38,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         fun initialize(collection: Collection<Pair<Scene, GameObject>>) : GameObjectTracker {
             if(_instance == null) _instance =
                 GameObjectTracker(collection)
-            else collection.forEach { instance.add(it.second, it.first) }
+            else collection.filter { !_instance!!.objectSet.contains(it.second) }.forEach { instance.add(it.second, it.first) }
             return instance
         }
     }
@@ -129,7 +130,7 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
 
             }
         }
-        printFullInfo()
+        printLayeredToStringInfo()
     }
 
     fun update() {
@@ -187,11 +188,12 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
         }
     }
 
-    fun printFullInfo() {
+    fun printLayeredToStringInfo() {
         println("Current Running Time = " + "%.2f sec".format(Time.totalTime))
         for (scene in activeSceneToGameObjects.keys) {
             println("#${scene.name}")
-            for (gameObject in activeSceneToGameObjects[scene]!!) {
+            val parentSortedList = activeSceneToGameObjects[scene]!!.toParentSortedList()
+            for (gameObject in parentSortedList) {
                 print("\t" + "  ".repeat(gameObject.level()))
                 if(gameObject.enabled) {
                     val hasComponent = gameObject.hasComponent<Renderer2DComponent>()
@@ -208,6 +210,25 @@ class GameObjectTracker private constructor (collection: Collection<Pair<Scene, 
                     println("[${component.javaClass.simpleName}] " + component)
                 }
             }
+        }
+    }
+
+    fun Set<GameObject>.toParentSortedList() : List<GameObject> {
+        val visited = mutableSetOf<GameObject>()
+        val output = mutableListOf<GameObject>()
+        for (gameObject in this) {
+            if(!visited.contains(gameObject)) {
+                val found = listOf(gameObject, *gameObject.getAllChildren().toTypedArray())
+                output.addAll(found)
+                visited.addAll(found)
+            }
+        }
+        return output
+    }
+
+    fun printFullInfo() {
+        for (gameObject in objectSet) {
+            GameObjectInfo(gameObject).printInfo()
         }
     }
 

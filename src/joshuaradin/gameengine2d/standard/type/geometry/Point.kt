@@ -87,4 +87,8 @@ data class Point(var x: Double, var y: Double) : PositionAdjustable<Point> {
     override fun recenter(newCenter: Vector2): Point {
         return copy()
     }
+
+    override fun transform(function: (Point) -> Point): Point {
+        return function(copy())
+    }
 }
