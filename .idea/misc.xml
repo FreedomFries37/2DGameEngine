@@ -6,6 +6,12 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/KCommandLine/pom.xml" />
+        <option value="$PROJECT_DIR$/KCommandLineInterpreter/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />

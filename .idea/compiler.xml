@@ -6,11 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Kotlin2DGameEngine" />
+        <module name="Engine" />
+        <module name="KCommandInterpreter" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Kotlin2DGameEngine" target="1.5" />
+      <module name="Engine" target="10" />
+      <module name="KCommandInterpreter" target="1.5" />
+      <module name="KCommandLine" target="1.5" />
+      <module name="KCommandLineInterpreter" target="10" />
+      <module name="Kotlin2DGameEngine" target="10" />
     </bytecodeTargetLevel>
   </component>
 </project>
