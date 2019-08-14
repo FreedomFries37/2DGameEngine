@@ -19,6 +19,12 @@ class CommanderBuilder{
         args.add(parameter)
     }
 
+    fun <T> addParameters(parameter1: Parameter<T>, parameter2: Parameter<T>, vararg parameters: Parameter<T>) {
+        args.add(parameter1)
+        args.add(parameter2)
+        args.addAll(parameters)
+    }
+
     fun build() : CommandInterpreter {
         return CommandInterpreter(args, commands)
     }
