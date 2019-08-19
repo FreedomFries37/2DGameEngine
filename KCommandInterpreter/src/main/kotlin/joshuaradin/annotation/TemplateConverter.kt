@@ -49,6 +49,15 @@ object TemplateConverter {
             parameters.add(parameter)
         }
 
-        return Command(allNames, commandTemplate.arity, commandTemplate.seperator, parameters, commandTemplate.converter.createInstance() as IMultiParameterConverter<R>, commandTemplate.requiredOptionsConverter.createInstance())
+        val command = Command<R>(
+            allNames,
+            commandTemplate.arity,
+            commandTemplate.seperator,
+            parameters,
+            commandTemplate.converter.createInstance() as IMultiParameterConverter<R>,
+            commandTemplate.requiredOptionsConverter.createInstance()
+        )
+        command.tag = if(commandTemplate.tag.isNotBlank()) commandTemplate.tag else null
+        return command
     }
 }

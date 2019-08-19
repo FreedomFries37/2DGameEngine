@@ -168,9 +168,10 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
             isParsed[command] = true
 
             for (parameter in command.parameters) {
-                if(parameter.required && isParsed[parameter] == false) {
+                val parsed = isParsed.getOrDefault(parameter, false)
+                if(parameter.required && !parsed) {
                     throw RequiredOptionMissingException(parameter)
-                }else if(isParsed[parameter] == false) {
+                }else if(!parsed) {
                     cmdParamValues.add(parameter.default())
                 }
             }
@@ -259,7 +260,7 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
 
     class NotParsedException(notparsed: Parameter<*>) : Exception("$notparsed was not parsed!")
     class NoOptionException(notparsed: String) : Exception("$notparsed is not an available option!")
-    class RequiredOptionMissingException(notparsed: Parameter<*>) : Exception("$notparsed is required but was not parsed!")
+    class RequiredOptionMissingException(notparsed: Parameter<*>) : Exception("${notparsed.names.first()} is required but was not parsed!")
     class RequiredOptionsMissingException(notparsed: Collection<Parameter<*>>) : Exception("$notparsed is required but was not parsed!")
     class NoValueException(notparsed: Parameter<*>) : Exception("$notparsed has no value!")
     class IncorrectArityException(notparsed: Parameter<*>, arityFound: Int) : Exception("$notparsed needs ${notparsed.arity}, found $arityFound")

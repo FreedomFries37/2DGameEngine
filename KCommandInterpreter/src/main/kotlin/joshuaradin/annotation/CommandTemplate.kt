@@ -11,5 +11,6 @@ annotation class CommandTemplate (val names: Array<String> = [],
                                   val arity: Int = 0,
                                   val seperator: String = "",
                                   val converter: KClass<out IMultiParameterConverter<*>> = DefaultConverters.DefaultCommandConverter::class,
-                                  val requiredOptionsConverter: KClass<out IStringConverter<*>> = DefaultConverters.StringConverter::class
+                                  val requiredOptionsConverter: KClass<out IStringConverter<*>> = DefaultConverters.StringConverter::class,
+                                  val tag: String = ""
 )

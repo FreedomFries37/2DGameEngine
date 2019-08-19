@@ -18,6 +18,7 @@ class Command<out T> (
     private val paramMap: MutableMap<Parameter<*>, Any?>  = mutableMapOf()
     private val paramsNameMap: Map<String, Parameter<*>>
     val parameters: Collection<Parameter<*>>
+    var tag: String? = null
 
     init {
 
@@ -50,15 +51,19 @@ class Command<out T> (
         return null
     }
 
-
-
-    fun <T> getParameterValue(parameter: String) : T? {
-        val param = getParameterForName(parameter)
-        param?: return null
-        return paramMap[param] as? T?
+    fun addTag(tag: String) : Command<T> {
+        this.tag = tag
+        return this
     }
 
-    fun <T> setParameterValue(parameter: String, value: T?) {
+
+    fun <R> getParameterValue(parameter: String) : R? {
+        val param = getParameterForName(parameter)
+        param?: return null
+        return paramMap[param] as? R?
+    }
+
+    fun <R> setParameterValue(parameter: String, value: R?) {
         paramMap[getParameterForName(parameter)!!] = value
     }
 
