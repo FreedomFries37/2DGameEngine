@@ -4,6 +4,7 @@ import joshuaradin.annotation.CommandTemplate
 import joshuaradin.annotation.ParameterTemplate
 import joshuaradin.annotation.TemplateConverter
 import joshuaradin.core.Command
+import joshuaradin.core.DefaultConverters
 import joshuaradin.core.IMultiParameterConverter
 import joshuaradin.core.ParameterValue
 import joshuaradin.gameengine2d.engine.core.ProjectInfo
@@ -39,4 +40,13 @@ object SystemCommands {
     @CommandTemplate(["save"], 0, tag = systemTag)
     class Save
     val save: Command<Boolean> = TemplateConverter.convertCommand<Save, Boolean>()
+
+    @CommandTemplate(names = ["info"], tag = systemTag)
+    class Info {
+
+        @ParameterTemplate(additionalNames = ["-l", "--level"], arity = 1, converter = DefaultConverters.IntConverter::class)
+        val level: Int = 0
+
+    }
+    val info: Command<Unit> = TemplateConverter.convertCommand<Info, Unit>()
 }

@@ -229,8 +229,11 @@ class GameObjectTracker internal constructor (collection: Collection<Pair<Scene,
     }
 
     fun printFullInfo() {
-        for (gameObject in objectSet) {
-            GameObjectInfo(gameObject).printInfo()
+        for (gameObjectsInScene in objectSet.groupBy { it.scene }) {
+            println("#${gameObjectsInScene.key}")
+            for (gameObject in gameObjectsInScene.value) {
+                GameObjectInfo(gameObject).printInfo()
+            }
         }
     }
 

@@ -27,10 +27,14 @@ class GameObjectInfo (val gameObject: GameObject) : Iterable<ComponentInfo<*>> {
             } else print("[ ] ")
         } else print("    ")
 
-        println("$gameObject")
+        println(gameObject.directedName())
         for (component in components) {
             println("\t     " + component.toString().replace("\n", "\n\t    \t"))
         }
+    }
+
+    fun GameObject.directedName() : String {
+        return (if(parent != null) parent!!.directedName() + "/" else "") + this.toString()
     }
 
     /**

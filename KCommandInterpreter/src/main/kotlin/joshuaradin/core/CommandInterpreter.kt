@@ -167,13 +167,21 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
         if(command != null) {
             isParsed[command] = true
 
+            var highestPriorityMissingParameter: Parameter<*>? = null
+            var highestPriority = Int.MAX_VALUE
+
             for (parameter in command.parameters) {
                 val parsed = isParsed.getOrDefault(parameter, false)
-                if(parameter.required && !parsed) {
-                    throw RequiredOptionMissingException(parameter)
+                if(parameter.required && !parsed && parameter.priority < highestPriority) {
+                    highestPriority = parameter.priority
+                    highestPriorityMissingParameter = parameter
                 }else if(!parsed) {
                     cmdParamValues.add(parameter.default())
                 }
+            }
+
+            if(highestPriorityMissingParameter != null) {
+                throw RequiredOptionMissingException(highestPriorityMissingParameter)
             }
         }
 
@@ -208,6 +216,8 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
         return cmd.getParameterForName(name)
     }
 
+
+
     private fun getCommandForName(name: String) : Command<*>? {
         return commands[name]
     }
@@ -232,6 +242,14 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
         param?: return null
         return paramMap[param] as? T?
     }
+
+    fun <T> getCommandParameterValue(parameter: String) : T? {
+        val p = getParameterForName(commandParsed()!!, parameter) as? Parameter<T>
+        p ?: return null
+        return getCommandParameterValue(p)
+    }
+
+    fun <T> getCommandParameterValue(parameter: Parameter<T>) : T? = cmdParamMap[parameter] as? T
     
     fun <T> getCommandValue(command: String) : T {
         if(!isCommand(command)) throw NoOptionException(command)
@@ -244,6 +262,15 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
         }
     }
 
+    fun <T> getCommandValue(command: Command<T>) : T {
+        if(isParsed[command] != true) throw NotParsedException(command)
+        try {
+            return cmdMap[command]!! as T
+        }catch (e: ClassCastException) {
+            throw NoValueException(command)
+        }
+    }
+
     /**
      * Checks if either the parameter or command was parsed
      */
@@ -251,9 +278,20 @@ class CommandInterpreter internal constructor(private val args: MutableCollectio
         return isParsed[joinedNameMap[command]] ?: false
     }
 
+    fun parsed(any: Any) : Boolean {
+        return isParsed[any] ?: false
+    }
+
     fun commandParsed() : Command<*>? {
         for (command in commands.values) {
             if(isParsed[command] == true) return command
+        }
+        return null
+    }
+
+    fun <T> commandParsedHard() : Command<T>? {
+        for (command in commands.values) {
+            if(isParsed[command] == true) return command as? Command<T>
         }
         return null
     }

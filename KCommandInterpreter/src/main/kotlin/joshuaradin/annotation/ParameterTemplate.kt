@@ -9,4 +9,5 @@ import kotlin.reflect.KClass
 annotation class ParameterTemplate (val additionalNames: Array<String> = [],
                                     val required: Boolean = false,
                                     val arity: Int = 1,
-                                    val converter: KClass<out IStringConverter<*>> = DefaultConverters.StringConverter::class)
+                                    val converter: KClass<out IStringConverter<*>> = DefaultConverters.StringConverter::class,
+                                    val priority: Int = 1)

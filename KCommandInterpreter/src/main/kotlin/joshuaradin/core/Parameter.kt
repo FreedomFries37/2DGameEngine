@@ -1,7 +1,6 @@
 package joshuaradin.core
 
 import java.io.InvalidClassException
-import java.util.*
 import kotlin.reflect.KClass
 
 
@@ -14,6 +13,23 @@ open class Parameter<out T> (
     val defaultValue: T? = null
 ) : Cloneable {
 
+    var priority: Int = 1
+    var layout: String
+        protected set
+    var description: String = ""
+
+    init {
+
+        var layout = names.first()
+        for (i in 0 until arity) {
+            layout += " o$i"
+        }
+
+
+
+        this.layout = layout
+    }
+
     override fun clone(): Parameter<T> {
         return Parameter(names, arity, required, converter, defaultValue)
     }
@@ -22,8 +38,21 @@ open class Parameter<out T> (
         return ParameterValue(this, defaultValue)
     }
 
+
     override fun toString(): String {
-        return "Parameter(names=${Arrays.toString(names)}, arity=$arity, required=$required, defaultValue=$defaultValue)"
+        return "Parameter(${names.joinToString()}) [arity=$arity, required=$required, defaultValue=$defaultValue]"
+    }
+
+    open fun printInfo() {
+
+        println(infoString())
+    }
+
+
+    fun infoString() : String{
+        val joinToString = names.joinToString()
+        return "$joinToString\t\t-\t$layout\n${" ".repeat(joinToString.length)}\t\t \t$description"
+
     }
 
     companion object {
@@ -61,6 +90,7 @@ open class Parameter<out T> (
                 }
             }
         }
+
     }
 
 

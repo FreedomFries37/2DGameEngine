@@ -27,9 +27,10 @@ object TemplateConverter {
         val defaultValue = obj.getter.call(parentCmd)
 
 
-
-
-        return Parameter(allNames, parameterTemplate.arity, parameterTemplate.required, converter, defaultValue)
+        val parameter =
+            Parameter(allNames, parameterTemplate.arity, parameterTemplate.required, converter, defaultValue)
+        parameter.priority = parameterTemplate.priority
+        return parameter
     }
 
     inline fun <reified T : Any, R> convertCommand() = convertCommand<T,R>(T::class)

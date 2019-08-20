@@ -13,12 +13,18 @@ class Command<out T> (
 
     companion object {
         val defaultName = arrayOf("default")
+
+        fun helpParameter() : Parameter<Unit> {
+            val arity = 0
+
+        }
     }
 
     private val paramMap: MutableMap<Parameter<*>, Any?>  = mutableMapOf()
     private val paramsNameMap: Map<String, Parameter<*>>
     val parameters: Collection<Parameter<*>>
     var tag: String? = null
+
 
     init {
 
@@ -33,6 +39,11 @@ class Command<out T> (
                 Pair(it, param)
             }
         }.flatten().toTypedArray()))
+
+
+         if(parameters.isNotEmpty()) {
+             layout += parameters.joinToString(separator = " ", transform = { "[${it.layout}]"})
+         }
 
     }
 
@@ -71,6 +82,11 @@ class Command<out T> (
         return "Command(parameters=$parameters)"
     }
 
-
+    override fun printInfo() {
+        super.printInfo()
+        for (parameter in parameters) {
+            println("\t${parameter.infoString()}")
+        }
+    }
 }
 

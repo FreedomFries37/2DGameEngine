@@ -9,8 +9,12 @@ import joshuaradin.core.ParameterValue
 import joshuaradin.gameengine2d.engine.core.scene.Scene
 import joshuaradin.gameengine2d.engine.core.scene.SceneManager
 
-@CommandTemplate(["scene"], 1, converter = SceneConverter::class)
+@CommandTemplate(["scene"], 1, converter = SceneConverter::class, tag = SceneCommand.tag)
 class SceneCommand {
+
+    companion object {
+        const val tag: String = "scene"
+    }
 
     @ParameterTemplate(["--name", "-n"], arity = 1, required = true, converter = DefaultConverters.StringConverter::class)
     val name: String? = null

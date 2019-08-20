@@ -10,6 +10,7 @@ import joshuaradin.editor.exceptions.ProjectLoadedException
 import joshuaradin.editor.exceptions.UnexpectedEditorBehavior
 import joshuaradin.gameengine2d.engine.core.ProjectInfo
 import joshuaradin.gameengine2d.engine.core.scene.Scene
+import joshuaradin.gameengine2d.engine.core.service.GameObjectTracker
 import java.util.*
 
 object Editor {
@@ -24,6 +25,7 @@ object Editor {
         builder.addCommand(SystemCommands.save)
         builder.addCommand(SystemCommands.load)
         builder.addCommand(SystemCommands.dirty)
+        builder.addCommand(SystemCommands.info)
         builder.addCommand(sceneCommand)
 
         interpreter = builder.build()
@@ -65,6 +67,7 @@ object Editor {
 
             when(interpreter.commandParsed()?.tag) {
                 SystemCommands.systemTag -> runSystemCommand()
+                SceneCommand.tag -> runSceneCommand()
                 null -> {
                     throw UnexpectedEditorBehavior()
                 }
@@ -97,7 +100,20 @@ object Editor {
             SystemCommands.dirty -> {
                 println("Dirty = $dirty")
             }
+            SystemCommands.info -> {
+                when(interpreter.getCommandParameterValue<Int>("--level")) {
+
+                    0 -> GameObjectTracker.instance.printAllObjectSceneAndPosition()
+                    1 -> GameObjectTracker.instance.printLayeredToStringInfo()
+                    2 -> GameObjectTracker.instance.printFullInfo()
+                    else -> throw IndexOutOfBoundsException()
+                }
+            }
         }
+    }
+
+    private fun runSceneCommand() {
+        currentScene = interpreter.getCommandValue(interpreter.commandParsedHard()!!)
     }
 
     private fun <T> waitConfirmation(msg: String = "Are you sure?", after: () -> T) {
